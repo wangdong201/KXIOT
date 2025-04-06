@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <style type="text/css">
+  <![CDATA[
+  :root {
+    --from-stroke-dasharray: 10 5;
+    --stroke-dashoffset: -200;
+    --animation: run 5s linear infinite;
+  }
+
+  .stop {
+    stroke-dasharray: var(--from-stroke-dasharray);
+  }
+
+  .runing {
+    stroke-dasharray: var(--from-stroke-dasharray);
+    animation: var(--animation);
+  }
+
+  @keyframes run {
+    0% {
+      stroke-dashoffset: 0;
+    }
+
+    100% {
+      stroke-dashoffset: var(--stroke-dashoffset);
+    }
+  }
+  ]]>
+</style>
+	 <defs>
+            <marker id="arrow-r" markerUnits="strokeWidth" markerWidth="12" markerHeight="12" viewBox="0 0 12 12"
+                refX="6" refY="6" orient="auto">
+                <path d="M2,2 L10,6 L2,10 L6,6 L2,2" fill="#ffffff" />
+            </marker>
+        </defs>
+	 <defs>
+            <marker id="arrow-l" markerUnits="strokeWidth" markerWidth="12" markerHeight="12" viewBox="0 0 12 12"
+                refX="6" refY="6" orient="auto">
+                <path d="M10,2 L2,6 L10,10 L6,6 L10,2" fill="#ffffff" />
+            </marker>
+        </defs>
+            <line class="runing"  x1="10" y1="10" x2="410" y2="10"  marker-start="url(#arrow-l)" marker-end="url(#arrow-r)" style="stroke:#fff;stroke-width:3"/>
+</svg>

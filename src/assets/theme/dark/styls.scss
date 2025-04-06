@@ -1,0 +1,936 @@
+// 深色主题的特殊样式
+html::-webkit-scrollbar {width: 4px;height:4px;background-color:#0c3e6a;border-radius:4px;}
+html::-webkit-scrollbar-thumb{background-color:rgba(135, 169, 214, 0.42);border-radius:4px;}
+html::-webkit-scrollbar-corner { background:#0c3e6a; }
+body.dark {
+  @import './element-variables.scss';
+
+  background:$--background-color-show;
+  color: $--color-text-regular;
+
+  .c-danger {
+    color: $--color-danger
+  }
+
+  .c-primary {
+    color: $--color-primary;
+  }
+
+  .content-box {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  .header {
+    border-bottom: 2px solid #1B425C;
+    background: linear-gradient(45deg, #020031 0, #275A7C 100%);
+  }
+
+
+  .sidebar {
+    box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .pLabel {
+    border-left: 3px solid $--color-primary;
+    color: $--color-primary;
+  }
+
+
+  .container {
+    //margin: 2px 20px;
+  }
+
+
+
+  .crumbs {
+    background: rgba(0, 0, 0, 0);
+    border: none;
+  }
+  .home{
+    color: $--color-text-regular;
+  }
+  .el-collapse-item__header {
+    background-color: $--background-color-show;
+    color:$--color-text-regular;
+  }
+  .el-upload-dragger .el-upload__text {
+    color: $--color-text-regular;
+  }
+  .el-upload__tip {
+    color: $--color-text-regular;
+}
+  .el-collapse-item__wrap{
+    background-color: $--background-color-show;
+    color:$--color-text-regular;
+  }
+  .el-collapse-item__content {
+    color:$--color-text-regular;
+  }
+
+  .el-collapse-item__header {
+    border-bottom: 1px solid $--border-color-extra-light;
+}
+.list-group-item {
+  border-bottom: 1px solid $--border-color-extra-light;
+  border-top: 1px solid $--border-color-extra-light;
+}
+  .rightPanel {
+    border-right: 4px solid $--color-primary;
+    background: $--background-color-show;
+
+    .handle-button {
+      background: $--color-primary;
+    }
+  }
+  .home blockquote {
+    border-left: 5px solid $--color-primary;
+}
+
+  /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: rgba(0, 0, 0, 0);
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.5);
+  }
+
+  /*定义滚动条轨道 内阴影+圆角*/
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  /*定义滑块 内阴影+圆角*/
+  ::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.15);
+    background-color: #486489;
+  }
+
+
+  /*修改框架本身的样式
+  ----------------------------------------------------------------------------------*/
+
+  .el-form-item__label {
+    color: $--color-text-regular;
+  }
+
+  .el-progress__text{
+    color: $--color-text-regular !important;
+  }
+
+  /*Menu*/
+  .el-menu {
+    background: $--border-color-extra-dark;//linear-gradient(45deg, #17335C 0, #020031 100%);
+    border: none;
+  }
+
+  .el-menu-item {
+    color: $--color-text-placeholder;
+  }
+
+  .el-menu-item i {
+    color: inherit;
+  }
+
+  .el-submenu__title {
+    color: $--color-text-placeholder;
+  }
+
+  .el-submenu__title i {
+    color: inherit;
+  }
+
+  .el-submenu__title:hover {
+    background-color: rgba(0, 0, 0, .4);
+  }
+
+  /*card*/
+  .el-card {
+    background: rgba(1, 8, 27, 0.4);
+    border: none;
+    height: 100%;
+
+    /*&.is-always-shadow {
+      box-shadow: 0 0 2px 2px rgba(76, 119, 169, 0.7);
+    }*/
+  }
+  .el-card__header {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+    background-color: rgba(1, 8, 27, 0.2);
+    border-bottom: 0;
+  }
+
+/*
+  .main-container.hasTagsView {
+
+    &::-webkit-scrollbar {width: 4px;height:4px;background-color:#0c3e6a;border-radius:4px;}
+    &::-webkit-scrollbar-thumb{background-color:rgba(135, 169, 214, 0.42);border-radius:4px;}
+    &::-webkit-scrollbar-corner { background:#0c3e6a; }
+  }
+  .app-wrapper {
+
+    &::-webkit-scrollbar {width: 4px;height:4px;background-color:#0c3e6a;border-radius:4px;}
+    &::-webkit-scrollbar-thumb{background-color:rgba(135, 169, 214, 0.42);border-radius:4px;}
+    &::-webkit-scrollbar-corner { background:#0c3e6a; }
+  }
+  */
+
+
+  /* Table*/
+  .el-table, .el-table tr {
+    background-color: $--background-color-base;
+  }
+  .el-drawer {
+background-color: #304156;
+  }
+  .el-table {
+      //border-width: 2px;
+      //border-image: -webkit-linear-gradient(left, $--border-color-base 0%, #fff 50%, $--border-color-base 100%) 2 2;
+      //box-shadow: 0 0 2px 2px rgba(76, 119, 169, 0.7);
+      //background: rgba(1, 8, 27, 0.1);
+      color:$--color-text-regular;
+  }
+  .el-table tr {
+
+    &:hover {
+      background-color: #212e3e !important;
+      color:#fff;
+    }
+  }
+  .el-table td {
+    border: none;
+    padding: 5px 0;
+    &:hover {
+      background-color: #212e3e !important;
+      color:#fff;
+    }
+  }
+  .el-table--enable-row-hover .el-table__body tr:hover>td{
+    background-color: #212e3e !important;
+    color:#fff;
+    }
+
+    .el-switch__core {
+      background: $--border-color-extra-dark;//#212e3e;
+  }
+  .el-divider__text {
+    background-color: $--background-color-show;
+    color:$--color-text-regular;
+}
+  .logo-wrapper {
+    background-color: $--background-color-base;
+    border-bottom: 1px solid $--border-color-extra-light;
+  }
+  .components-body {
+    background-color: $--background-color-base;
+    color:$--color-text-regular;
+  }
+  .components-title {
+    background-color: $--background-color-base;
+    color:$--color-text-regular;
+  }
+  .components-title .svg-icon {
+    color:$--color-text-regular;
+  }
+  .components-body .svg-icon {
+    color:$--color-text-regular;
+  }
+  .reg-item {
+    background-color: $--background-color-base;
+    color:$--color-text-regular;
+}
+.el-transfer-panel {
+  background-color: $--background-color-base;
+  color:$--color-text-regular;
+}
+.el-transfer-panel .el-transfer-panel__header {
+  background-color: rgba(0, 0, 0, .025);
+  color:$--color-text-regular;
+}
+.el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label {
+  color:$--color-text-regular;
+}
+.el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label span {
+  color:$--color-text-regular;
+}
+.action-bar {
+  border-bottom: 1px solid $--border-color-extra-light;
+  border: 1px solid $--border-color-extra-light;
+}
+.center-scrollbar {
+  border-left: 1px solid $--border-color-extra-light;
+  border-right: 1px solid $--border-color-extra-light;
+}
+  .drawing-board .active-from-item > .el-form-item {
+    background-color: $--background-color-base;
+    color:$--color-text-regular;
+}
+.el-message-box {
+  background-color: $--background-color-show;
+  border: 1px solid $--border-color-extra-light;
+  color:$--color-text-regular;
+}
+.el-message-box__title {
+  color:$--color-text-regular;
+}
+.el-message-box__content {
+  color:$--color-text-regular;
+}
+.el-tabs--border-card {
+  background: $--background-color-base;
+  border: 1px solid $--border-color-extra-light;
+  -webkit-box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%), 0 0 6px 0 rgb(0 0 0 / 4%);
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%), 0 0 6px 0 rgb(0 0 0 / 4%);
+  color:$--color-text-regular;
+}
+.el-tabs--border-card > .el-tabs__header {
+  background-color: $--background-color-base;
+  border-bottom: 1px solid $--border-color-extra-light;
+  color:$--color-text-regular;
+}
+.ql-editor.ql-blank::before {
+  color: rgba(255,255,255,0.6);
+}
+.ql-snow .ql-picker-options {
+  background-color: $--background-color-show;
+  color:$--color-text-regular;
+}
+.el-popper[x-placement^=bottom] .popper__arrow {
+  top: -7px;
+  color:$--border-color-base;
+  &:after {
+    border-bottom-color: #304156;
+  }
+}
+.el-popper[x-placement^=top] .popper__arrow {
+  color:$--border-color-base;
+  &:after {
+    border-top-color: #304156;
+  }
+}
+.login {
+  .login-form {
+
+    .el-input {
+
+      height: 38px;
+      input {
+        height: 38px;
+        border: 1px solid rgb(18,254,253);
+      }
+    }
+    .input-icon {
+      height: 39px;
+      width: 14px;
+      margin-left: 5px;
+      margin-right: 0px;
+      color: rgb(18,254,253);
+    }
+    .el-input__prefix .el-input__icon{
+      color: rgb(18,254,253);
+    }
+    .cright-icon:hover{
+      color: rgb(18,254,253);
+    }
+    .el-checkbox{
+      .el-checkbox__label  {
+          color: #fff;
+      }
+    }
+  }
+  .login-tip {
+    font-size: 13px;
+    text-align: center;
+    color: #bfbfbf;
+  }
+
+}
+.dashboard-editor-container{
+  background-color: $--background-color-base;
+  color:$--color-text-regular;
+}
+.panel-group .card-panel {
+  background-color: rgba(0, 0, 0, 0.05);
+  color:$--color-text-regular;
+  border: 1px solid $--color-primary;
+}
+.panel-group .card-panel .card-panel-description .card-panel-text {
+  color:$--color-text-regular;
+}
+.el-dropdown-menu__item:not(.is-disabled):hover, .el-dropdown-menu__item:focus {
+  background-color: $--border-color-extra-dark;
+  color: $--color-primary;
+}
+.el-tabs--border-card > .el-tabs__header .el-tabs__item {
+  color:$--color-text-regular;
+}
+.el-tabs--border-card > .el-tabs__header .el-tabs__item.is-active {
+  color: #1890ff;
+  background-color: $--border-color-extra-light;
+  border-right-color: rgba(0, 0, 0, .025);
+  border-left-color: rgba(0, 0, 0, .025);
+}
+.el-input-number__increase, .el-input-number__decrease {
+  background-color: $--border-color-extra-light;
+  color:$--color-text-regular;
+  border-left-color:1px solid $--color-text-regular;
+}
+.el-radio-button__inner {
+  background-color: $--background-color-base;
+  border: 1px solid $--border-color-extra-dark;
+  color:$--color-text-regular;
+}
+.el-color-picker__panel {
+  background-color: $--background-color-show;
+  border: 1px solid #e6ebf5;
+  -webkit-box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+}
+.el-date-editor .el-range-separator {
+  color:$--color-text-regular;
+}
+.drawing-item:hover {
+  background-color: $--border-color-extra-light;
+}
+.el-cascader-menu:hover {
+  background-color: $--border-color-extra-light;
+}
+ .el-cascader-node:hover {
+  background-color: $--border-color-extra-light;
+ }
+ .is-required:hover {
+  background-color: $--border-color-extra-light;
+ }
+ .el-date-table td.in-range div {
+  background-color: $--border-color-extra-dark;
+}
+ .el-form-item.is-required.el-form-item--medium{
+  background-color: $--background-color-base;
+ }
+ .el-time-panel__btn {
+  color:$--color-text-regular;
+}
+.el-date-table th {
+  color:$--color-text-regular;
+}
+.drawing-item > .drawing-item-copy, .drawing-row-item > .drawing-item-copy {
+  background-color: $--border-color-extra-dark;
+}
+.drawing-item > .drawing-item-delete, .drawing-row-item > .drawing-item-delete {
+  background-color: $--border-color-extra-dark;
+}
+.el-input .el-input__count .el-input__count-inner {
+  background-color: $--background-color-base;
+  color:$--color-text-regular;
+}
+/*
+ .el-form-item--medium:hover {
+  background-color: $--border-color-extra-light;
+}*/
+.el-checkbox {
+  color:$--color-text-regular;
+}
+/*.el-form-item:hover {
+  background-color: $--border-color-extra-light;
+}*/
+.node-icon {
+  color:$--color-text-regular;
+}
+.popup-main {
+  background-color: $--background-color-base;
+}
+.popup-result .title {
+  background: $--border-color-extra-light;
+}
+.el-input-group__append, .el-input-group__prepend {
+  background-color: $--background-color-base;
+  color:$--border-color-base;
+  border: 1px solid $--border-color-base;
+}
+/*
+  .el-table__body .el-table__row.hover-row td{
+    background-color: rgba(0, 0, 0, .1) !important;
+
+  }
+  .el-table tbody tr:hover>td {
+    background: rgba(0, 0, 0, .1) !important;
+
+ }*/
+  .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, .el-pagination.is-background .el-pager li {
+
+    color:$--color-text-regular;
+
+}
+.icon-ul li:hover {
+  background-color: $--border-color-extra-light;
+ }
+  .el-table th {
+    padding: 5px 0;
+    background-color: $--background-color-show;
+    color:$--color-text-regular;
+  }
+
+  /* DatePicker*/
+  .el-picker-panel {
+    background-color: $--background-color-show;
+    border: 1px solid $--border-color-base;
+    .el-time-range-picker__header {
+      color:$--color-text-regular;
+    }
+  }
+  .pagination-container{
+    background:$--background-color-show;
+    color: $--color-text-regular;
+  }
+  .el-picker-panel__sidebar {
+    background-color: $--background-color-show;
+    color: $--color-text-regular;
+  }
+
+  .el-picker-panel__footer {
+    background-color: $--background-color-show;
+    color: $--color-text-regular;
+  }
+  .el-scrollbar{
+    background-color: $--background-color-show;
+    //border: 1px solid $--border-color-base;
+    color:$--color-text-regular;
+  }
+  .el-date-range-picker__content, .el-date-range-picker__time-header, .el-picker-panel__footer, .el-picker-panel__sidebar {
+    border-color: $--border-color-base;
+    color: $--color-text-regular;
+    background-color: $--background-color-show;
+  }
+  .el-select-dropdown {
+    border: solid 1px $--border-color-base;// $--color-text-regular;
+    -webkit-box-shadow: none;
+    box-shadow:  none;
+    border-radius: 0px;
+}
+label {
+  font-weight: 100;
+}
+.el-table__body tr.current-row > td.el-table__cell {
+  background-color: rgba(0, 0, 0, .3);
+}
+  .el-date-editor .el-range-input{
+    color:$--color-text-regular;
+  }
+  .el-time-panel {
+    background-color: $--background-color-show;
+    color:$--color-text-regular;
+  }
+  .el-popover {
+    background-color: $--background-color-show;
+    color:$--color-text-regular;
+}
+/* */
+.el-dropdown-menu {
+  background-color: $--background-color-show;
+  color:$--color-text-regular;
+}
+.el-dropdown-menu__item {
+  background-color: $--background-color-show;
+  color:$--color-text-regular;
+}
+.el-dropdown-menu__item--divided:before {
+  background-color:rgba(0, 0, 0, .025);
+}
+.tags-view-container .contextmenu {
+  background-color: $--background-color-show;
+  color:$--color-text-regular;
+}
+.tags-view-container .contextmenu li:hover{
+  background-color:rgba(0, 0, 0, .025);
+  color:$--color-primary;
+}
+  .el-dialog__headerbtn .el-dialog__close {
+    color:$--color-text-regular;
+  }
+  .el-time-spinner__item:hover:not(.disabled):not(.active) {
+    background-color: $--color-primary;
+  }
+
+  .el-time-panel__btn.confirm {
+    color: $--color-primary;
+  }
+
+  .el-time-spinner__item {
+    color: $--color-text-regular;
+  }
+
+  .el-time-spinner__item.active:not(.disabled) {
+    color: $--color-primary;
+  }
+
+  .el-time-panel__content::after, .el-time-panel__content::before, .el-time-panel__footer {
+    border-color: $--border-color-base;
+    background-color: $--background-color-show;
+    color:$--color-text-regular
+  }
+  .drawer-container .drawer-title {
+color:$--color-text-regular
+}
+  .drawer-container .drawer-item {
+    color:$--color-text-regular
+}
+
+  .el-picker-panel__icon-btn, .el-picker-panel__shortcut {
+    color: $--color-text-regular;
+    background-color: $--background-color-show;
+    color:$--color-text-regular
+  }
+
+  .el-button.is-disabled.is-plain, body.dark .el-button.is-disabled.is-plain:hover, body.dark .el-button.is-disabled.is-plain:focus {
+    background-color: $--border-color-base;
+
+  }
+  .el-input.is-disabled .el-input__inner {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+  .el-picker-panel__shortcut:hover {
+    color: $--color-primary;
+  }
+  .ql-snow .ql-stroke {
+    stroke:$--color-text-regular;
+    stroke-width: 1;
+}
+.ql-snow .ql-picker {
+  color: $--color-text-regular;
+}
+.ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill {
+  fill: $--color-text-regular;
+}
+  /*Checkbox,radio*/
+  .el-range-input, .el-checkbox__inner, .el-radio__inner {
+    background-color: $--background-color-base;
+    border-color: $--color-text-placeholder;
+  }
+
+  .el-checkbox__input.is-checked .el-checkbox__inner, .el-radio__input.is-checked .el-radio__inner {
+    border-color: $--color-primary;
+    background-color: $--color-primary;
+  }
+  .el-radio__label {
+    color: $--color-text-placeholder;
+
+  }
+  .el-checkbox__input.is-checked + .el-checkbox__label, .el-radio__input.is-checked + .el-radio__label {
+    color: $--color-primary;
+
+  }
+  .vue-treeselect__control{
+    background-color:$--background-color-base;
+    color:$--color-text-regular;
+  }
+  .vue-treeselect__menu-container{
+    background-color:$--background-color-show;
+    color:$--color-text-regular;
+  }
+  .vue-treeselect__menu{
+    background-color:$--background-color-show;
+    color:$--color-text-regular;
+  }
+
+
+  .vue-treeselect__option--highlight {
+    background-color:rgba(0, 0, 0, 0.2) ;
+  }
+  .vue-treeselect--single .vue-treeselect__option--selected {
+    background-color:rgba(0, 0, 0, 0.1) ;
+  }
+  .vue-treeselect--single .vue-treeselect__option--selected:hover {
+    background-color:rgba(0, 0, 0, 0.1) ;
+  }
+
+  .el-tag.el-tag--info {
+    background-color: rgba(0, 0, 0, 0.1) ;
+    border-color: rgba(0, 0, 0, 0.3);
+    color: #fff;
+}
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+  color: $--color-primary;
+  background-color: rgba(0, 0, 0, 0.2) ;
+}
+.el-tag.el-tag--info .el-tag__close {
+  color: $--color-info;
+}
+  .vue-treeselect__single-value{
+    color:$--color-text-regular;
+  }
+  .el-checkbox {
+    margin-right: 8px;
+  }
+  .el-card {
+    background-color: $--background-color-show;
+    color:$--color-text-regular;
+  }
+  .el-tabs__item {
+    color:$--color-text-regular;
+  }
+  /*pagination*/
+  .pagination {
+    text-align: right;
+
+    .el-pagination__total {
+      float: left;
+    }
+  }
+
+  .el-pagination.is-background .el-pager li {
+    background-color: $--color-info;
+  }
+
+  .el-pagination.is-background .btn-prev:not(:disabled), .el-pagination.is-background .btn-next:not(:disabled) {
+    background-color: $--color-info;
+  }
+
+  .el-pagination.is-background .btn-prev:disabled, .el-pagination.is-background .btn-next:disabled {
+    color: $--color-white;
+    background-color: $--color-text-placeholder;
+  }
+
+  .el-pagination__jump, .el-pagination__total {
+    color: $--color-text-regular;
+  }
+
+  .el-pagination__jump .el-input {
+    width: 50px;
+  }
+  /*tree*/
+  .el-tree {
+    background-color: $--background-color-base;
+    color: $--color-text-regular;
+  }
+
+  .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+    background-color: $--border-color-extra-light;
+    color: $--color-text-regular;
+  }
+
+  .el-tree .el-tree-node__content {
+    background-color: $--background-color-base;
+    color: $--color-text-regular;
+  }
+  .el-checkbox-group{
+    background-color: $--background-color-base;
+    color: $--color-text-regular;
+  }
+  .navbar {
+    background-color: $--background-color-base;
+    color: $--color-text-regular;
+    box-shadow: 0 1px 4px rgba(0,21,41,.08);
+
+    .hamburger-container {
+      line-height: 46px;
+      height: 100%;
+      float: left;
+      cursor: pointer;
+      transition: background .3s;
+      -webkit-tap-highlight-color:transparent;
+      color: #fff;
+      &:hover {
+        background: rgba(0, 0, 0, .025)
+      }
+    }
+    .hamburger {
+      fill:$--color-text-regular;
+    }
+    .breadcrumb-container {
+      float: left;
+    }
+
+    .topmenu-container {
+      position: absolute;
+      left: 50px;
+    }
+
+    .errLog-container {
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .right-menu {
+      float: right;
+      height: 100%;
+      line-height: 50px;
+
+      &:focus {
+        outline: none;
+      }
+
+      .right-menu-item {
+        display: inline-block;
+        padding: 0 8px;
+        height: 100%;
+        font-size: 18px;
+        color: $--color-text-regular;
+        vertical-align: text-bottom;
+
+        &.hover-effect {
+          cursor: pointer;
+          transition: background .3s;
+
+          &:hover {
+            background: rgba(0, 0, 0, .025)
+          }
+        }
+      }
+      .el-divider__text {
+        background-color: $--background-color-show;
+        color:$--color-text-regular;
+      }
+      .avatar-container {
+        margin-right: 30px;
+
+        .avatar-wrapper {
+          margin-top: 5px;
+          position: relative;
+
+          .user-avatar {
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+          }
+
+          .el-icon-caret-bottom {
+            cursor: pointer;
+            position: absolute;
+            right: -20px;
+            top: 25px;
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+
+  .tags-view-container{
+    background-color: $--background-color-base;
+    color: $--color-text-regular;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+  .tags-view-container .tags-view-wrapper .tags-view-item {
+    background: rgba(0, 0, 0, 0.1);
+    color: $--color-text-regular;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .el-link.el-link--default {
+    color: $--color-text-regular;
+}
+  /*dialog*/
+  .el-dialog {
+    background: $--background-color-show;
+    border: 0px solid;
+    color: $--color-text-regular;
+    //border-image: -webkit-linear-gradient(left, #869bbb 0%, #fff 50%, #869bbb 100%) 30 30;
+  }
+  .el-table__expand-icon {
+    color: $--color-text-regular;
+  }
+  .el-dialog__body {
+    color: $--color-text-regular;
+  }
+  .el-dialog__title {
+    color: $--color-white
+  }
+
+  .el-dialog__header {
+    //border-bottom:1px solid #869bbb;
+  }
+
+  /*button*/
+  .el-button.is-plain {
+    background: $--background-color-base;
+    border-color: inherit;
+    &:hover, &:active, &:focus {
+      background: $--background-color-base;
+      color: inherit;
+    }
+  }
+  .el-button.el-button--default {
+    color:$--color-text-regular;
+    background: $--background-color-base;
+  }
+
+
+  .el-button + .el-button {
+    margin-left: 10px;
+  }
+  .el-transfer__buttons {
+    .el-button--medium.el-transfer__button{
+      margin-left: 0px;
+    }
+  }
+  /*upload*/
+  .el-upload-dragger {
+    background: $--background-color-base;
+    border-color: $--color-info;
+  }
+
+  .el-upload-dragger, .el-upload {
+    width: 100%;
+  }
+
+  /*loading*/
+  .el-loading-mask {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /*crumb*/
+  .el-breadcrumb__item:last-child .el-breadcrumb__inner, .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover, .el-breadcrumb__item:last-child .el-breadcrumb__inner a, .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover {
+    font-weight: normal;
+    color: $--color-text-regular;
+    cursor: text;
+  }
+  .el-tooltip{
+    color: $--color-text-regular;
+  }
+  .el-breadcrumb__inner.is-link {
+    color: $--color-text-regular;
+  }
+  .el-tag {
+    background-color: rgba(0, 0, 0, 0.0);
+    border-color:#03A9A7;//#1890ff;// #d1e9ff;
+}
+
+  .el-breadcrumb__inner.is-link:hover {
+    color: $--color-primary;
+  }
+
+  /*input*/
+  .el-input__inner, .el-textarea__inner {
+    background: $--background-color-base;
+    color: $--color-text-regular;
+    border-color: $--border-color-base;
+  }
+
+  .el-input-group__prepend {
+    padding: 0;
+  }
+
+  /*select*/
+  .el-select-dropdown__item {
+    color: $--color-text-regular;
+  }
+
+  .el-select-dropdown__item.selected {
+    color: $--color-primary;
+  }
+
+  .el-select-dropdown__item.hover, .el-select-dropdown__item:hover {
+    background-color: $--border-color-extra-light;
+  }
+  .el-breadcrumb__inner.is-link, .el-breadcrumb__inner a {
+    color: $--color-text-regular;
+  }
+  .app-breadcrumb.el-breadcrumb .no-redirect {
+    color: $--color-text-regular;
+  }
+}
