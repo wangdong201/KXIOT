@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { postSvg } from "@/api/drawio";
 export default {
   props: ["initialXml"],
   data() {
@@ -42,13 +43,15 @@ export default {
         stealth: "1", // 禁用部分浏览器限制
         spin: "1", // 显示加载动画
         configure: "0", // 禁用配置面板
+        hide: "format;shapes", // 隐藏格式和形状面板
+        // 其他参数...
+        embed: "1", // 嵌入模式
       });
-      // return `https://embed.diagrams.net/?${params.toString()}`;
+      // return `https://embed.diagrams.net/?${params.toString()}`; // 官方demo
       return `/drawio/index.html?${params.toString()}`; // 本地demo
-      // return `http://localhost:8080/drawio/index.html?${params.toString()}`;
     },
     onIframeLoad() {
-      console.log("🔄 Draw.io iframe 加载完成");
+      // console.log("🔄 Draw.io iframe 加载完成");
     },
     handleMessage(event) {
       const iframeWindow = this.$refs.drawioIframe?.contentWindow;
@@ -56,18 +59,41 @@ export default {
 
       try {
         const data = JSON.parse(event.data);
-        console.log("[Draw.io 消息]", data);
+        // console.log("[Draw.io 消息]", data);
 
         if (data.event === "init") {
-          console.log("✅ 初始化成功");
           this.isEditorReady = true;
           this.$nextTick(() => this.loadXml(this.initialXml));
         }
 
         // 新增：处理加载完成事件
         if (data.event === "load") {
-          console.log("🗂️ 文件已加载，强制刷新视图");
           this.forceRefresh();
+        }
+        // 新增：处理保存事件
+        if (data.event === "save") {
+          const xml = data.xml;
+          if (xml) {
+            console.log("🔄 自动保存的XML数据:", xml);
+            postSvg({ data: xml })
+              .then(() => {
+                console.log("✅ 保存成功");
+                this.$message({
+                  message: "图表保存成功",
+                  type: "success",
+                  showClose: true,
+                  duration: 2000,
+                });
+              })
+              .catch((e) => {
+                console.error("❌ 保存失败:", e);
+                this.$message.error({
+                  message: `保存失败: ${e.message || "未知错误"}`,
+                  showClose: true,
+                  duration: 3000,
+                });
+              });
+          }
         }
       } catch (error) {
         console.log("[非 JSON 消息] 已过滤");
@@ -98,7 +124,6 @@ export default {
           // 强制指定页面索引
           currentPage: 0,
         };
-        console.log("📤 发送加载消息:", message);
         this.$refs.drawioIframe.contentWindow.postMessage(
           JSON.stringify(message),
           "*"
@@ -109,27 +134,39 @@ export default {
       // 清理非法字符
       const cleanXml = xml.replace(/[\x00-\x1F\x7F]/g, "").trim();
 
-      // 如果已经是完整结构则直接返回
-      if (
-        cleanXml.includes("<mxfile>") &&
-        cleanXml.includes("<diagram>") &&
-        cleanXml.includes("<mxGraphModel>")
-      ) {
+      // 使用正则检测完整结构（允许属性存在）
+      const structureCheck =
+        /<mxfile[^>]*>[\s\S]*<diagram[^>]*>[\s\S]*<mxGraphModel[^>]*>/i;
+
+      if (structureCheck.test(cleanXml)) {
         return cleanXml;
       }
 
       // 修复添加缺失的顶层结构
       return `
-    <mxfile>
-      <diagram id="0" name="Page-1">
-        ${
-          cleanXml.includes("<mxGraphModel>")
-            ? cleanXml
-            : `<mxGraphModel>${cleanXml}</mxGraphModel>`
-        }
-      </diagram>
-    </mxfile>
-  `;
+        <mxfile>
+          <diagram id="0" name="Page-1">
+            ${
+              cleanXml.includes("<mxGraphModel>")
+                ? cleanXml
+                : `<mxGraphModel>${cleanXml}</mxGraphModel>`
+            }
+          </diagram>
+        </mxfile>`.trim();
+    },
+    // 修改后的获取当前绘图的 XML 并上传
+    getDiagramXml() {
+      const iframeWindow = this.$refs.drawioIframe?.contentWindow;
+      if (!iframeWindow) return;
+
+      // 发送保存指令（确保与handleMessage中的保存触发联动）
+      iframeWindow.postMessage(
+        JSON.stringify({
+          action: "save",
+          format: "xml",
+        }),
+        "*" // 使用通配符确保跨域
+      );
     },
   },
 };

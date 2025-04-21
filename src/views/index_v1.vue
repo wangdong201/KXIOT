@@ -348,7 +348,6 @@ export default {
     this.getpaylist();
   },
   methods: {
-  
     /** 加载部门树数据 */
     async deptTreeroom() {
       try {
@@ -575,14 +574,14 @@ export default {
 
     /** 显示加载中状态 */
     showLoading() {
-      this.dialogVisible = true; // 打开弹出层
-      this.loading = true; // 显示加载动画
-      this.dialogContent = ""; // 清空上一次内容
+      this.dialogVisible = true;
+      this.loading = true;
+      this.dialogContent = "";
     },
 
     /** 隐藏加载中状态 */
     hideLoading() {
-      this.loading = false; // 隐藏加载动画
+      this.loading = false;
     },
     handleClose(done) {
       done();
