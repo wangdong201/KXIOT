@@ -134,7 +134,7 @@ export default {
       // 清理非法字符
       const cleanXml = xml.replace(/[\x00-\x1F\x7F]/g, "").trim();
 
-      // 使用正则检测完整结构（允许属性存在）
+      // 检测完整结构
       const structureCheck =
         /<mxfile[^>]*>[\s\S]*<diagram[^>]*>[\s\S]*<mxGraphModel[^>]*>/i;
 
@@ -159,7 +159,7 @@ export default {
       const iframeWindow = this.$refs.drawioIframe?.contentWindow;
       if (!iframeWindow) return;
 
-      // 发送保存指令（确保与handleMessage中的保存触发联动）
+      // 发送保存指令
       iframeWindow.postMessage(
         JSON.stringify({
           action: "save",
