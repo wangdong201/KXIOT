@@ -36,6 +36,7 @@
             ref="formRef"
             :inline="true"
             :model="jeform"
+            :rules="formRules"
             label-width="100px"
           >
             <el-form-item label="基本账户" v-if="roomdatalist.jbzh !== null">
@@ -50,9 +51,10 @@
             <el-form-item label="水账户" v-if="roomdatalist.szh !== null">
               <div>{{ roomdatalist.szh }}元</div>
             </el-form-item>
-            <el-form-item label="缴费金额">
+            <el-form-item label="缴费金额" prop="mon">
               <el-input
                 v-model="jeform.mon"
+                @input="handleNumberInput"
                 placeholder="请输入缴费金额"
               ></el-input>
             </el-form-item>
@@ -334,7 +336,10 @@ export default {
         zhmoney2: null,
         deptId: null,
       },
-      jeform: { id: null, mon: null, type: 0, info: null },
+      jeform: { id: null, mon: "", type: 0, info: null },
+      formRules: {
+        mon: [{ required: true, message: "请输入缴费金额", trigger: "blur" }],
+      },
     };
   },
   computed: {},
@@ -469,10 +474,13 @@ export default {
 
     /** 缴费按钮操作 */
     handleUpdate(row) {
-      console.log(row.id);
+      if (row.state === 1) {
+        this.$message.warning("该用户已被禁止缴费，无法进行缴费操作");
+      }
       this.selectedNode = {
         icon: "el-icon-user",
         id: row.id,
+        state: row.state,
       };
       this.jeform.id = row.id;
       roominfotreelist(row.id).then((response) => {
@@ -504,12 +512,30 @@ export default {
       this.getpaylist();
     },
 
+    /** 处理金额输入 */
+    handleNumberInput(value) {
+      this.jeform.mon = value
+        .replace(/[^\d.-]/g, "") // 只保留数字、小数点和负号
+        .replace(/(?!^)-/g, "") // 负号只能在开头
+        .replace(/(\..*)\./g, "$1"); // 只允许一个小数点
+    },
+
     /** 充值提交 */
     onSubmit() {
+      // 检查缴费状态
+      if (this.selectedNode && this.selectedNode.state === 1) {
+        this.$message.warning("该用户已被禁止缴费，无法进行缴费操作");
+        return;
+      }
+
       this.$refs.formRef.validate(async (valid) => {
         if (valid) {
           try {
-            await postjfpay(this.jeform);
+            const submitData = {
+              ...this.jeform,
+              mon: parseFloat(this.jeform.mon),
+            };
+            await postjfpay(submitData);
             this.$message.success("缴费成功");
             // 清空表单数据
             this.jeform.mon = "";

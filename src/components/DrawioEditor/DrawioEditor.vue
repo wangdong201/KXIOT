@@ -17,6 +17,7 @@ export default {
     return {
       drawioUrl: this.getDrawioUrl(),
       isEditorReady: false,
+      messageHandler: null,
     };
   },
   watch: {
@@ -27,10 +28,13 @@ export default {
     },
   },
   mounted() {
-    window.addEventListener("message", this.handleMessage);
+    this.messageHandler = this.handleMessage.bind(this);
+    // window.addEventListener("message", this.handleMessage);
+    window.addEventListener("message", this.messageHandler);
   },
   beforeDestroy() {
-    window.removeEventListener("message", this.handleMessage);
+    // window.removeEventListener("message", this.handleMessage);
+    window.removeEventListener("message", this.messageHandler);
   },
   methods: {
     getDrawioUrl() {
@@ -41,7 +45,6 @@ export default {
         noSaveBtn: "0",
         client: "1", // 启用客户端模式
         stealth: "1", // 禁用部分浏览器限制
-        spin: "1", // 显示加载动画
         configure: "0", // 禁用配置面板
         hide: "format;shapes", // 隐藏格式和形状面板
         // 其他参数...
