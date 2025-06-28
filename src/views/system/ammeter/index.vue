@@ -305,7 +305,7 @@
     <el-dialog
       :title="title"
       :visible.sync="open"
-      width="70%"
+      width="40%"
       append-to-body
       class="ammeter-dialog"
     >
@@ -1177,13 +1177,13 @@ export default {
 .ammeter-dialog-form {
   display: flex;
   justify-content: space-around;
-  height: 620px;
+  min-height: 520px;
   overflow: auto;
 
   .adf-right,
   .adf-left {
-    width: 40%;
-    padding-right: 20px;
+    width: 45%;
+    // padding-right: 20px;
   }
 }
 

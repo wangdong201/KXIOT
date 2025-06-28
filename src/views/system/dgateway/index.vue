@@ -297,10 +297,10 @@ export default {
     /** 获取表类型名称 */
     getModeName(mode) {
       const modeNames = {
-        1: "TCP",
-        2: "直接表",
-        3: "UDP",
-        4: "4G",
+        0: "TCP",
+        1: "直接表",
+        2: "UDP",
+        5: "4G",
       };
       return modeNames[mode] || "未知"; // 默认返回 '未知'，如果没有匹配的值
     },

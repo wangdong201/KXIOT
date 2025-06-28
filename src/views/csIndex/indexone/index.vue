@@ -1,12 +1,28 @@
 <template>
   <div class="app-container">
+    <!-- 说明 -->
+    <PageHelp
+      :help-items="helpConfig"
+      dialog-title="页面功能说明"
+      @help-opened="onHelpOpened"
+      @help-closed="onHelpClosed"
+    />
     <div class="index-one">
       <!-- left content -->
       <div class="one-left">
         <div class="Water-intake">
           <div class="Water-intake-title">
-            <IconSvg icon="icon-fuzhi" color="#6A80F0" fontSize="1vw" />
-            <span>取水量</span>
+            <IconSvg icon="icon-chart" color="#6A80F0" fontSize="1vw" />
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="点击选择项目"
+              placement="top-start"
+            >
+              <span style="cursor: pointer" @click="dialogVisible = true">{{
+                title
+              }}</span>
+            </el-tooltip>
           </div>
           <div class="Water-intake-content">
             <div
@@ -94,20 +110,62 @@
         </div>
       </div>
     </div>
+    <!-- 弹出层 -->
+    <el-dialog
+      title="项目选择"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <div class="tree-container">
+        <!-- default-expand-all -->
+        <el-tree
+          :data="deptOptions"
+          :props="defaultProps"
+          :expand-on-click-node="false"
+          ref="tree"
+          node-key="id"
+          :default-expanded-keys="[100]"
+          highlight-current
+          @node-click="handleNodeSelect"
+          :render-content="renderContent"
+        />
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmSelection">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { deptTreeSelect } from "@/api/system/user";
 import DynamicChart from "./components/DynamicChart .vue";
 import DynamicPieChart from "./components/DynamicPieChart.vue";
+import PageHelp from "./components/describe.vue";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   name: "IndexOne",
   components: {
     DynamicChart,
     DynamicPieChart,
+    Treeselect,
+    PageHelp,
   },
   data() {
     return {
+      dialogVisible: false,
+      deptOptions: undefined,
+      deptId: null,
+      title: "请选择项目",
+      selectedNode: null,
+      expandedKeys: [],
+      defaultProps: {
+        children: "children",
+        label: "label",
+      },
       categories: [
         "1月",
         "2月",
@@ -179,9 +237,85 @@ export default {
           colors: ["rgba(174,222,158, 0.5)", "rgba(174,222,158, 0)"],
         },
       ],
+      helpConfig: [
+        {
+          icon: "el-icon-data-analysis",
+          title: "取水监控区域",
+          descriptions: [
+            "实时显示许可取水量、计划取水量等关键指标",
+            "通过图表对比分析计划与实际取水情况",
+            "支持项目切换，点击项目名称选择不同监控对象",
+          ],
+        },
+        {
+          icon: "el-icon-warning",
+          title: "预警消息区域",
+          descriptions: [
+            "展示系统报警次数的月度统计",
+            "通过柱状图直观显示报警趋势",
+            "帮助及时发现和处理异常情况",
+          ],
+        },
+        {
+          icon: "el-icon-monitor",
+          title: "设备监控区域",
+          descriptions: [
+            "显示超声波流量计等设备的数量统计",
+            "实时监控设备运行状态",
+            "便于设备管理和维护",
+          ],
+        },
+        {
+          icon: "el-icon-pie-chart",
+          title: "水资源用途区域",
+          descriptions: [
+            "饼图展示生产用水、生活用水、绿化用水的分布比例",
+            "折线图显示各类用水的月度变化趋势",
+            "支持用水结构分析和优化决策",
+          ],
+        },
+      ],
     };
   },
+  created() {
+    this.getDeptTree();
+  },
   methods: {
+    /** 查询部门下拉树结构 */
+    getDeptTree() {
+      deptTreeSelect().then((response) => {
+        this.deptOptions = response.data;
+        if (response.data && response.data.length > 0) {
+          this.title = response.data[0].label;
+          this.selectedNode = response.data[0];
+          this.deptId = response.data[0].id;
+        }
+      });
+    },
+    /** 处理树节点选择事件 */
+    handleNodeSelect(node) {
+      this.selectedNode = node;
+      console.log("选中的节点:", node);
+    },
+    confirmSelection() {
+      if (this.selectedNode) {
+        this.title = this.selectedNode.label;
+        this.deptId = this.selectedNode.id;
+        this.dialogVisible = false;
+      } else {
+        this.$message.warning("请先选择一个项目");
+      }
+    },
+
+    renderContent(h, { node, data }) {
+      return (
+        <span>
+          <i class={data.icon}></i>
+          <span> {node.label}</span>
+        </span>
+      );
+    },
+
     /** 背景色 */
     getBackgroundStyle(index) {
       const colors = [
@@ -193,6 +327,18 @@ export default {
       return {
         backgroundImage: colors[index % colors.length],
       };
+    },
+    handleClose(done) {
+      this.dialogVisible = false;
+      done();
+    },
+    // 帮助组件事件处理
+    onHelpOpened() {
+      console.log("帮助说明已打开");
+    },
+
+    onHelpClosed() {
+      console.log("帮助说明已关闭");
     },
   },
 };
@@ -424,6 +570,10 @@ export default {
         }
       }
     }
+  }
+  .tree-container {
+    max-height: 700px;
+    overflow-y: auto;
   }
 }
 </style>

@@ -182,63 +182,290 @@
     <el-dialog
       :title="title"
       :visible.sync="open"
-      width="70%"
+      width="800px"
       append-to-body
       class="custom_dialog"
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <div class="dialog_form">
-          <div class="form_left">
-            <el-form-item label="项目名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入项目名称" />
-            </el-form-item>
-            <el-form-item label="排序" prop="sort">
-              <el-input v-model="form.sort" placeholder="请输入排序" />
-            </el-form-item>
-            <el-form-item label="项目到期时间" prop="dqeTime">
-              <el-date-picker
-                clearable
-                v-model="form.dqeTime"
-                type="date"
-                value-format="yyyy-MM-dd"
-                placeholder="请选择项目到期时间"
-                style="width: 100%"
-              >
-              </el-date-picker>
-            </el-form-item>
-            <el-form-item label="电表类型" prop="dblx">
-              <el-select
-                v-model="form.dblx"
-                multiple
-                placeholder="请选择"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in dboptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="电表类型" prop="dblx">
+                <el-select
+                  v-model="form.dblx"
+                  multiple
+                  placeholder="请选择"
+                  style="width: 100%"
                 >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="水表类型" prop="sblx">
-              <el-select
-                v-model="form.sblx"
-                multiple
-                placeholder="请选择"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in sboptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
+                  <el-option
+                    v-for="item in dboptions"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="水表类型" prop="sblx">
+                <el-select
+                  v-model="form.sblx"
+                  multiple
+                  placeholder="请选择"
+                  style="width: 100%"
                 >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <!-- <el-form-item label="气表类型" prop="qblx">
+                  <el-option
+                    v-for="item in sboptions"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="系统类型" prop="systype">
+                <el-select
+                  v-model="form.systype"
+                  multiple
+                  placeholder="请输入系统类型"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in systypeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="支付类型" prop="zftype">
+                <el-select
+                  v-model="form.zftype"
+                  multiple
+                  placeholder="请输入支付类型"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in zfoptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="对应区域" prop="bid">
+                <Treeselect
+                  v-model="form.bid"
+                  :options="deptOptions"
+                  :show-count="true"
+                  placeholder="请选择或者搜索归属部门"
+                  :default-expand-level="form.bid ? Infinity : 1"
+                  :auto-scroll="true"
+                  :auto-open="true"
+                  :branchNodesFirst="true"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="项目名称" prop="name">
+                <el-input v-model="form.name" placeholder="请输入项目名称" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="排序" prop="sort">
+                <el-input v-model="form.sort" placeholder="请输入排序" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="电表数量" prop="dbcount">
+                <el-input v-model="form.dbcount" placeholder="请输入电表数量" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="水表数量" prop="sbcount">
+                <el-input v-model="form.sbcount" placeholder="请输入水表数量" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="微信appid" prop="wxappid">
+                <el-input
+                  v-model="form.wxappid"
+                  placeholder="请输入微信appid"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="mchid" prop="wxmchid">
+                <el-input v-model="form.wxmchid" placeholder="请输入mchid" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="secret" prop="wxaddsecret">
+                <el-input
+                  v-model="form.wxaddsecret"
+                  placeholder="请输入secret"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="paykey" prop="wxpaykey">
+                <el-input v-model="form.wxpaykey" placeholder="请输入paykey" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="余额不足推送" prop="wxtemplate1">
+                <el-input
+                  v-model="form.wxtemplate1"
+                  placeholder="请输入余额不足推送"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="缴费提醒推送" prop="wxtemplate2">
+                <el-input
+                  v-model="form.wxtemplate2"
+                  placeholder="请输入缴费提醒推送"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="标题" prop="title">
+                <el-input v-model="form.title" placeholder="请输入标题" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="链接网址" prop="url">
+                <el-input v-model="form.url" placeholder="请输入链接网址" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="短信剩余数" prop="duanxin">
+                <el-input
+                  v-model="form.duanxin"
+                  placeholder="请输入短信剩余数"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="手续费" prop="shouxufei">
+                <el-input v-model="form.shouxufei" placeholder="请输入手续费" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="手续费提示" prop="shouxufeits">
+                <el-input
+                  v-model="form.shouxufeits"
+                  placeholder="请输入手续费提示"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="最小缴费金额" prop="minmon">
+                <el-input
+                  v-model="form.minmon"
+                  placeholder="请输入最小缴费金额"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="手机端底部信息" prop="phinfo">
+                <el-input
+                  v-model="form.phinfo"
+                  placeholder="请输入手机端底部信息"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="开始断电时间" prop="qfks">
+                <el-input
+                  v-model="form.qfks"
+                  placeholder="请输入开始断电时间"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="结束断电时间" prop="qfjs">
+                <el-input
+                  v-model="form.qfjs"
+                  placeholder="请输入结束断电时间"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="警告推送模版" prop="wxtemplate3">
+                <el-input
+                  v-model="form.wxtemplate3"
+                  placeholder="请输入警告推送模版"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="物业费推送模版" prop="wxtemplate11">
+                <el-input
+                  v-model="form.wxtemplate11"
+                  placeholder="请输入物业费推送模版"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="支付宝appid" prop="alipayappid">
+                <el-input
+                  v-model="form.alipayappid"
+                  placeholder="请输入支付宝appid"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="publickey" prop="alipaypublickey">
+                <el-input
+                  v-model="form.alipaypublickey"
+                  type="textarea"
+                  placeholder="请输入内容"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="privatekey" prop="alipayprivatekey">
+                <el-input
+                  v-model="form.alipayprivatekey"
+                  type="textarea"
+                  placeholder="请输入内容"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="logo路径" prop="logotext">
+                <el-upload
+                  class="upload-demo"
+                  action="http://localhost:8080"
+                  :on-preview="handlePreview"
+                  :on-remove="handleRemove"
+                  :before-remove="beforeRemove"
+                  :limit="1"
+                  :on-change="handleChange"
+                  :file-list="fileList"
+                  list-type="picture"
+                >
+                  <el-button size="small" type="primary">点击上传</el-button>
+                  <div slot="tip" class="el-upload__tip">
+                    只能上传jpg/png文件,且不超过500kb
+                  </div>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+
+        <!-- <el-form-item label="气表类型" prop="qblx">
               <el-select
                 v-model="form.qblx"
                 multiple
@@ -270,177 +497,12 @@
                 </el-option>
               </el-select>
             </el-form-item> -->
-            <el-form-item label="电表数量" prop="dbcount">
-              <el-input v-model="form.dbcount" placeholder="请输入电表数量" />
-            </el-form-item>
-            <el-form-item label="水表数量" prop="sbcount">
-              <el-input v-model="form.sbcount" placeholder="请输入水表数量" />
-            </el-form-item>
-            <!-- <el-form-item label="气表数量" prop="qbcount">
+        <!-- <el-form-item label="气表数量" prop="qbcount">
               <el-input v-model="form.qbcount" placeholder="请输入气表数量" />
             </el-form-item>
             <el-form-item label="热表数量" prop="rbcount">
               <el-input v-model="form.rbcount" placeholder="请输入热表数量" />
             </el-form-item> -->
-            <el-form-item label="系统类型" prop="systype">
-              <el-select
-                v-model="form.systype"
-                multiple
-                placeholder="请输入系统类型"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in systypeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="微信appid" prop="wxappid">
-              <el-input v-model="form.wxappid" placeholder="请输入微信appid" />
-            </el-form-item>
-            <el-form-item label="mchid" prop="wxmchid">
-              <el-input v-model="form.wxmchid" placeholder="请输入mchid" />
-            </el-form-item>
-            <el-form-item label="secret" prop="wxaddsecret">
-              <el-input v-model="form.wxaddsecret" placeholder="请输入secret" />
-            </el-form-item>
-            <el-form-item label="paykey" prop="wxpaykey">
-              <el-input v-model="form.wxpaykey" placeholder="请输入paykey" />
-            </el-form-item>
-            <el-form-item label="余额不足推送" prop="wxtemplate1">
-              <el-input
-                v-model="form.wxtemplate1"
-                placeholder="请输入余额不足推送"
-              />
-            </el-form-item>
-            <el-form-item label="缴费提醒推送" prop="wxtemplate2">
-              <el-input
-                v-model="form.wxtemplate2"
-                placeholder="请输入缴费提醒推送"
-              />
-            </el-form-item>
-            <el-form-item label="标题" prop="title">
-              <el-input v-model="form.title" placeholder="请输入标题" />
-            </el-form-item>
-            <el-form-item label="链接网址" prop="url">
-              <el-input v-model="form.url" placeholder="请输入链接网址" />
-            </el-form-item>
-          </div>
-          <div class="form_right">
-            <el-form-item label="短信剩余数" prop="duanxin">
-              <el-input v-model="form.duanxin" placeholder="请输入短信剩余数" />
-            </el-form-item>
-            <el-form-item label="支付类型" prop="zftype">
-              <el-select
-                v-model="form.zftype"
-                multiple
-                placeholder="请输入支付类型"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in zfoptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="对应区域" prop="bid">
-              <Treeselect
-                v-model="form.bid"
-                :options="deptOptions"
-                :show-count="true"
-                placeholder="请选择或者搜索归属部门"
-                :default-expand-level="form.bid ? Infinity : 1"
-                :auto-scroll="true"
-                :auto-open="true"
-                :branchNodesFirst="true"
-              />
-            </el-form-item>
-
-            <el-form-item label="手续费" prop="shouxufei">
-              <el-input v-model="form.shouxufei" placeholder="请输入手续费" />
-            </el-form-item>
-            <el-form-item label="手续费提示" prop="shouxufeits">
-              <el-input
-                v-model="form.shouxufeits"
-                placeholder="请输入手续费提示"
-              />
-            </el-form-item>
-            <el-form-item label="最小缴费金额" prop="minmon">
-              <el-input
-                v-model="form.minmon"
-                placeholder="请输入最小缴费金额"
-              />
-            </el-form-item>
-            <el-form-item label="手机端底部信息" prop="phinfo">
-              <el-input
-                v-model="form.phinfo"
-                placeholder="请输入手机端底部信息"
-              />
-            </el-form-item>
-            <el-form-item label="开始断电时间" prop="qfks">
-              <el-input v-model="form.qfks" placeholder="请输入开始断电时间" />
-            </el-form-item>
-            <el-form-item label="结束断电时间" prop="qfjs">
-              <el-input v-model="form.qfjs" placeholder="请输入结束断电时间" />
-            </el-form-item>
-            <el-form-item label="警告推送模版" prop="wxtemplate3">
-              <el-input
-                v-model="form.wxtemplate3"
-                placeholder="请输入警告推送模版"
-              />
-            </el-form-item>
-            <el-form-item label="物业费推送模版" prop="wxtemplate11">
-              <el-input
-                v-model="form.wxtemplate11"
-                placeholder="请输入物业费推送模版"
-              />
-            </el-form-item>
-            <el-form-item label="支付宝appid" prop="alipayappid">
-              <el-input
-                v-model="form.alipayappid"
-                placeholder="请输入支付宝appid"
-              />
-            </el-form-item>
-            <el-form-item label="publickey" prop="alipaypublickey">
-              <el-input
-                v-model="form.alipaypublickey"
-                type="textarea"
-                placeholder="请输入内容"
-              />
-            </el-form-item>
-            <el-form-item label="privatekey" prop="alipayprivatekey">
-              <el-input
-                v-model="form.alipayprivatekey"
-                type="textarea"
-                placeholder="请输入内容"
-              />
-            </el-form-item>
-            <el-form-item label="logo路径" prop="logotext">
-              <el-upload
-                class="upload-demo"
-                action="http://localhost:8080"
-                :on-preview="handlePreview"
-                :on-remove="handleRemove"
-                :before-remove="beforeRemove"
-                :limit="1"
-                :on-change="handleChange"
-                :file-list="fileList"
-                list-type="picture"
-              >
-                <el-button size="small" type="primary">点击上传</el-button>
-                <div slot="tip" class="el-upload__tip">
-                  只能上传jpg/png文件,且不超过500kb
-                </div>
-              </el-upload>
-            </el-form-item>
-          </div>
-        </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -851,21 +913,10 @@ export default {
 
 <style lang="scss">
 .dialog_form {
-  display: flex;
   // justify-content: space-between;
-  justify-content: space-around;
-  height: 700px;
+  height: 650px;
   overflow: auto;
-
-  .form_left {
-    width: 40%;
-    padding-right: 20px;
-  }
-
-  .form_right {
-    width: 40%;
-    padding-right: 20px;
-  }
+  padding: 0px 10px;
 }
 
 .el-table th .cell {
@@ -874,4 +925,3 @@ export default {
   text-overflow: ellipsis;
 }
 </style>
-
