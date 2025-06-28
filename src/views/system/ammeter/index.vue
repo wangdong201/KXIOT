@@ -307,6 +307,7 @@
       :visible.sync="open"
       width="40%"
       append-to-body
+      :close-on-click-modal="false"
       class="ammeter-dialog"
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -466,6 +467,7 @@
       :visible.sync="open2"
       width="30%"
       append-to-body
+      :close-on-click-modal="false"
       class=""
     >
       <!-- 批量修改表单 -->
@@ -616,7 +618,7 @@ export default {
       // 非多个禁用
       multiple: true,
       // 房间树
-      deptOptionsroom: undefined,
+      deptOptionsroom: [],
       // 显示搜索条件
       showSearch: true,
       // 总条数

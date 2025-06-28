@@ -1,0 +1,6 @@
+﻿@charset "utf-8";
+/* CSS Document */
+@font-face{
+  font-family: electronicFont;
+  src: url('./DS-DIGIT.TTF'); /* 修正路径 */
+}

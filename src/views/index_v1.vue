@@ -274,14 +274,30 @@
     <el-dialog
       :title="czstatus"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="320px"
       :before-close="handleClose"
+      class="simple-reading-dialog"
     >
-      <div
-        v-loading="loading"
-        style="min-height: 100px; text-align: center; font-size: 1vw"
-      >
-        <p v-if="!loading">{{ dialogContent }}</p>
+      <div class="simple-dialog-content" v-loading="loading">
+        <div v-if="!loading" class="content-wrapper">
+          <!-- 成功读取时显示数值 -->
+          <div
+            v-if="dialogContent && !dialogContent.includes('失败')"
+            class="reading-display"
+          >
+            <div class="data-card">
+              <div class="data-value">{{ dialogContent }}</div>
+            </div>
+          </div>
+
+          <!-- 失败时显示错误信息 -->
+          <div v-else class="error-display">
+            <div class="error-container">
+              <i class="el-icon-warning"></i>
+              <p class="error-text">{{ dialogContent }}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -303,7 +319,7 @@ export default {
   data() {
     return {
       dialogContent: "",
-      czstatus: "",
+      czstatus: "操作提示",
       dialogVisible: false,
       selectedNode: {},
       roomdatalist: {},
@@ -567,7 +583,7 @@ export default {
         this.dialogVisible = true;
         const response = await dbdslist(id);
         this.dialogContent = response.data.show.replace(/&nbsp;/g, " ");
-        this.czstatus = response.msg;
+        // this.czstatus = response.msg;
         console.log("读电量", response);
       } catch (error) {
         console.error("请求失败:", error);
@@ -582,7 +598,7 @@ export default {
         this.dialogVisible = true;
         const response = await dglxxlist(id);
         this.dialogContent = response.data.show.replace(/&nbsp;/g, " ");
-        this.czstatus = response.msg;
+        // this.czstatus = response.msg;
         console.log("读多功能", response);
       } catch (error) {
         console.error("请求失败:", error);
@@ -616,7 +632,8 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+@import "../assets/fonts/led.css";
 .form-card {
   width: 100%;
   display: flex;
@@ -636,6 +653,107 @@ export default {
     font-weight: 600;
     text-align: center;
     color: rgb(84, 160, 255);
+  }
+}
+
+/* 简洁弹出层样式 */
+.simple-reading-dialog {
+  .el-dialog {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .el-dialog__header {
+    padding: 16px 20px;
+
+    .el-dialog__title {
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+
+  .el-dialog__body {
+    padding: 0px 25px 20px !important;
+  }
+}
+
+.simple-dialog-content {
+  padding: 6px 5px 26px 5px;
+
+  .content-wrapper {
+    text-align: center;
+  }
+
+  .reading-display {
+    .data-card {
+      border-radius: 10px;
+      padding: 15px 5px;
+      margin-bottom: 15px;
+      background-image: url("../assets/images/dudian.png");
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+
+      .data-value {
+        font-family: electronicFont, "Courier New", monospace;
+        font-size: 20px;
+        font-weight: normal;
+        color: #0f3819;
+        letter-spacing: 3px;
+        line-height: 1.2;
+        padding: 10px 15px;
+        border-radius: 6px;
+        display: inline-block;
+      }
+
+      .data-label {
+        font-size: 12px;
+        color: #718096;
+        font-weight: 400;
+      }
+    }
+
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0fff4;
+      color: #38a169;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid #c6f6d5;
+
+      i {
+        font-size: 14px;
+      }
+
+      span {
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .error-display {
+    .error-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+
+      i {
+        font-size: 32px;
+        // color: #e53e3e;
+      }
+
+      .error-text {
+        font-size: 16px;
+        // color: #e53e3e;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
   }
 }
 </style>
