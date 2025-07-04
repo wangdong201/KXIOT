@@ -72,62 +72,65 @@
               v-for="item in roomdatalist.listd"
               :key="item.id"
             >
-              <el-card class="box-card xs">
-                <div slot="header" class="clearfix">
+              <el-card class="box-card xs optimized-card">
+                <div slot="header" class="clearfix card-header">
                   <span>{{ item.name }}</span>
                 </div>
-                <div style="padding-top: 5px">
-                  <span class="textspan">日用电量:</span>
-                  <span class="textspan" style="margin-left: 0.3vw">
-                    {{ item.date }}
-                  </span>
+                <div @click="detailDbdslist(item.id)">
+                  <div style="padding-top: 5px">
+                    <span class="textspan">日用电量:</span>
+                    <span class="textspan" style="margin-left: 0.3vw">
+                      {{ item.date }}
+                    </span>
+                  </div>
+                  <div style="padding-top: 5px">
+                    <span class="textspan">月用电量:</span>
+                    <span class="textspan" style="margin-left: 0.3vw">
+                      {{ item.yue }}
+                    </span>
+                  </div>
+                  <div style="padding-top: 5px">
+                    <span class="textspan">余额:</span>
+                    <span class="textspan" style="margin-left: 0.3vw">
+                      {{ item.mon }}
+                    </span>
+                  </div>
+                  <div style="padding-top: 5px">
+                    <span class="textspan">抄表时间:</span>
+                    <span class="textspan" style="margin-left: 0.3vw">
+                      {{ item.Cbtime }}
+                    </span>
+                  </div>
+                  <div style="padding-top: 5px">
+                    <span class="textspan">通讯状态:</span>
+                    <span class="textspan" style="margin-left: 0.3vw">
+                      {{ item.zt }}
+                    </span>
+                  </div>
                 </div>
-                <div style="padding-top: 5px">
-                  <span class="textspan">月用电量:</span>
-                  <span class="textspan" style="margin-left: 0.3vw">
-                    {{ item.yue }}
-                  </span>
-                </div>
-                <div style="padding-top: 5px">
-                  <span class="textspan">余额:</span>
-                  <span class="textspan" style="margin-left: 0.3vw">
-                    {{ item.mon }}
-                  </span>
-                </div>
-                <div style="padding-top: 5px">
-                  <span class="textspan">抄表时间:</span>
-                  <span class="textspan" style="margin-left: 0.3vw">
-                    {{ item.Cbtime }}
-                  </span>
-                </div>
-                <div style="padding-top: 5px">
-                  <span class="textspan">通讯状态:</span>
-                  <span class="textspan" style="margin-left: 0.3vw">
-                    {{ item.zt }}
-                  </span>
-                </div>
+
                 <el-button-group
-                  style="display: flex; gap: 8px; margin-top: 10px"
+                  style="display: flex; gap: 0px; margin-top: 10px"
                 >
                   <el-button
                     type="primary"
                     @click="readDbdslist(item.id)"
                     size="mini"
-                    style="flex: 1; white-space: nowrap"
+                    style="flex: 1; white-space: nowrap; z-index: 999"
                     >读电量</el-button
                   >
                   <el-button
                     type="primary"
                     @click="readDglxxlist(item.id)"
                     size="mini"
-                    style="flex: 1; white-space: nowrap"
+                    style="flex: 1; white-space: nowrap; z-index: 999"
                     >读多功能</el-button
                   >
                   <el-button
                     type="primary"
                     @click="modifyDbdslist(item.id)"
                     size="mini"
-                    style="flex: 1; white-space: nowrap"
+                    style="flex: 1; white-space: nowrap; z-index: 999"
                     >修改</el-button
                   >
                 </el-button-group>
@@ -614,6 +617,15 @@ export default {
       });
     },
 
+    /** 跳转电表详细信息 */
+    detailDbdslist(id) {
+      this.$router.push({
+        path: "/newly/newly/DPone",
+        query: { id },
+      });
+      console.log("跳转电表详细信息", id);
+    },
+
     /** 显示加载中状态 */
     showLoading() {
       this.dialogVisible = true;
@@ -634,10 +646,54 @@ export default {
 
 <style lang="scss">
 @import "../assets/fonts/led.css";
+
+.dark {
+  .el-button {
+    margin-left: 0px !important;
+  }
+  .form-card {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 20px;
+
+    .card-con {
+      width: calc(20% - 10px);
+      min-width: 260px;
+      font-size: 0.8vw;
+      margin-right: 7px;
+      margin-top: 7px;
+      transition: all 0.3s ease;
+      border-radius: 20px;
+
+      &:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    // 优化后的卡片样式
+    .optimized-card {
+      border-radius: 20px !important;
+    }
+
+    .card-header,
+    .el-card__header {
+      background: #35465a;
+    }
+
+    .clearfix {
+      font-size: 1vw;
+      font-weight: 600;
+      text-align: center;
+    }
+  }
+}
+
 .form-card {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  border-radius: 20px;
 
   .card-con {
     width: calc(20% - 10px);
@@ -645,14 +701,28 @@ export default {
     font-size: 0.8vw;
     margin-right: 7px;
     margin-top: 7px;
-    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    transition: all 0.3s ease;
+    border-radius: 20px;
+
+    &:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  // 优化后的卡片样式
+  .optimized-card {
+    border-radius: 20px !important;
+  }
+
+  .card-header,
+  .el-card__header {
+    background: #d9d9d9;
   }
 
   .clearfix {
     font-size: 1vw;
     font-weight: 600;
     text-align: center;
-    color: rgb(84, 160, 255);
   }
 }
 

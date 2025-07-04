@@ -85,4 +85,24 @@ export function postjfpay(data){
 }
 
 
+// 电表信息
+export function getlooking(data){
+  return request({
+    url: '/system/ammeter/looking',
+    method: 'get',
+     params: data,
+  })
+}
+
+
+// 表格刷新
+export function getnewmess(data){
+  return request({
+    url: '/system/ammeter/newmess',
+    method: 'get',
+     params: data,
+  })
+}
+
+
 

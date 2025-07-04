@@ -1,8 +1,8 @@
 <template>
   <div class="page-help" :style="helpStyle">
     <!-- 帮助图标 -->
-    <div 
-      class="help-icon" 
+    <div
+      class="help-icon"
       @click="showHelpDialog"
       :class="{ 'help-icon--active': helpDialogVisible }"
     >
@@ -24,9 +24,9 @@
       top="8vh"
     >
       <div class="help-dialog-content">
-        <div 
-          class="help-item" 
-          v-for="(item, index) in helpItems" 
+        <div
+          class="help-item"
+          v-for="(item, index) in helpItems"
           :key="`help-${index}`"
           :class="`help-item--${item.type || 'default'}`"
         >
@@ -50,8 +50,8 @@
       </div>
       <template #footer>
         <div class="dialog-footer">
-          <el-button 
-            type="primary" 
+          <el-button
+            type="primary"
             @click="handleClose"
             size="medium"
           >
@@ -85,9 +85,9 @@ export default {
       type: Array,
       required: true,
       validator: (items) => {
-        return items.every(item => 
-          item.title && 
-          item.icon && 
+        return items.every(item =>
+          item.title &&
+          item.icon &&
           (item.descriptions || item.content)
         );
       }
@@ -208,16 +208,16 @@ export default {
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
-  
+
   &:hover {
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
   }
-  
+
   &:active {
     transform: translateY(-1px) scale(0.98);
   }
-  
+
   &--active {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
@@ -228,7 +228,7 @@ export default {
     font-size: 20px;
     transition: transform 0.2s ease;
   }
-  
+
   &:hover i {
     transform: rotate(15deg);
   }
@@ -240,73 +240,73 @@ export default {
     z-index: 3000 !important;
     backdrop-filter: blur(4px);
   }
-  
+
   ::v-deep .el-dialog {
     z-index: 3001 !important;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   }
-  
+
   ::v-deep .el-dialog__header {
     padding: 24px 24px 16px;
     border-bottom: 1px solid #f0f2f5;
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    
+
     .el-dialog__title {
       font-size: 20px;
       font-weight: 600;
       color: #1f2937;
       display: flex;
       align-items: center;
-      
+
       &::before {
         content: "📖";
         margin-right: 8px;
         font-size: 18px;
       }
     }
-    
+
     .el-dialog__headerbtn {
       top: 20px;
       right: 20px;
-      
+
       .el-dialog__close {
         font-size: 18px;
         color: #6b7280;
-        
+
         &:hover {
           color: #374151;
         }
       }
     }
   }
-  
+
   ::v-deep .el-dialog__body {
     padding: 24px;
     max-height: 65vh;
     overflow-y: auto;
-    
+
     /* 自定义滚动条 */
     &::-webkit-scrollbar {
       width: 6px;
     }
-    
+
     &::-webkit-scrollbar-track {
       background: #f1f5f9;
       border-radius: 3px;
     }
-    
+
     &::-webkit-scrollbar-thumb {
       background: #cbd5e1;
       border-radius: 3px;
-      
+
       &:hover {
         background: #94a3b8;
       }
     }
   }
-  
+
   ::v-deep .el-dialog__footer {
     padding: 16px 24px 24px;
     text-align: center;
@@ -324,7 +324,7 @@ export default {
       transition: all 0.2s ease;
       position: relative;
       overflow: hidden;
-      
+
       &::before {
         content: '';
         position: absolute;
@@ -334,25 +334,25 @@ export default {
         height: 100%;
         background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
       }
-      
+
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         border-color: #d1d5db;
       }
-      
+
       &--primary::before {
         background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
       }
-      
+
       &--success::before {
         background: linear-gradient(to bottom, #10b981, #047857);
       }
-      
+
       &--warning::before {
         background: linear-gradient(to bottom, #f59e0b, #d97706);
       }
-      
+
       &--danger::before {
         background: linear-gradient(to bottom, #ef4444, #dc2626);
       }
@@ -371,7 +371,7 @@ export default {
           align-items: center;
           justify-content: center;
           margin-right: 12px;
-          
+
           .help-item-icon {
             font-size: 18px;
             color: #3b82f6;
@@ -386,10 +386,10 @@ export default {
           line-height: 1.4;
         }
       }
-      
+
       .help-item-content {
         margin-left: 52px;
-        
+
         ul {
           margin: 0;
           padding: 0;
@@ -401,7 +401,7 @@ export default {
             margin-bottom: 8px;
             padding-left: 20px;
             position: relative;
-            
+
             &::before {
               content: "•";
               position: absolute;
@@ -409,13 +409,13 @@ export default {
               color: #3b82f6;
               font-weight: bold;
             }
-            
+
             &:last-child {
               margin-bottom: 0;
             }
           }
         }
-        
+
         p {
           margin: 0;
           color: #4b5563;
@@ -439,7 +439,7 @@ export default {
   .help-icon {
     background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    
+
     &:hover {
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
     }
@@ -449,44 +449,44 @@ export default {
     ::v-deep .el-dialog__header {
       background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
       border-bottom-color: #374151;
-      
+
       .el-dialog__title {
         color: #f9fafb;
       }
     }
-    
+
     ::v-deep .el-dialog__footer {
       background: #1f2937;
       border-top-color: #374151;
     }
-    
+
     .help-item {
       background: #1f2937 !important;
       border-color: #374151 !important;
-      
+
       .help-item-header {
         .help-item-icon-wrapper {
           background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-          
+
           .help-item-icon {
             color: #60a5fa;
           }
         }
-        
+
         .help-item-title {
           color: #f9fafb;
         }
       }
-      
+
       .help-item-content {
         ul li {
           color: #d1d5db;
-          
+
           &::before {
             color: #60a5fa;
           }
         }
-        
+
         p {
           color: #d1d5db;
         }
@@ -502,45 +502,45 @@ export default {
       width: 95% !important;
       margin: 5vh auto !important;
     }
-    
+
     ::v-deep .el-dialog__body {
       padding: 16px;
       max-height: 70vh;
     }
-    
+
     .help-item {
       padding: 16px !important;
       margin-bottom: 16px !important;
-      
+
       .help-item-header {
         .help-item-icon-wrapper {
           width: 36px;
           height: 36px;
-          
+
           .help-item-icon {
             font-size: 16px;
           }
         }
-        
+
         .help-item-title {
           font-size: 16px;
         }
       }
-      
+
       .help-item-content {
         margin-left: 48px;
-        
+
         ul li {
           font-size: 14px;
         }
       }
     }
   }
-  
+
   .help-icon {
     width: 40px !important;
     height: 40px !important;
-    
+
     i {
       font-size: 18px !important;
     }
