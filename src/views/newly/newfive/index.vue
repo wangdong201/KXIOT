@@ -209,6 +209,7 @@ export default {
 .new_view {
   height: calc(100vh - 64px);
   padding: 10px;
+  background-color: #2a4c74;
 }
 
 .text_fs {

@@ -861,11 +861,11 @@ color:$--color-text-regular
 
 
   .el-button + .el-button {
-    margin-left: 10px;
+    margin-left: 10px !important;
   }
   .el-transfer__buttons {
     .el-button--medium.el-transfer__button{
-      margin-left: 0px;
+      margin-left: 10px !important;
     }
   }
   /*upload*/

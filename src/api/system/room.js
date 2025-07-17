@@ -42,3 +42,12 @@ export function delRoom(id) {
     method: 'delete'
   })
 }
+
+// /system/room/buildinfo1
+export function getBuildInfo1(data) {
+  return request({
+    url: '/system/room/buildinfo1',
+    method: 'get',
+    params: data
+  })
+}

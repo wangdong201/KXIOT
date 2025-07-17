@@ -88,6 +88,11 @@ export default {
     },
     renderChart() {
       const { xAxisData = [], series = [] } = this.chartData;
+      const isTimeSeries =
+        series.length > 0 &&
+        series[0].data &&
+        series[0].data.length > 0 &&
+        Array.isArray(series[0].data[0]);
 
       const option = {
         tooltip: {
@@ -158,9 +163,9 @@ export default {
           },
         },
         xAxis: {
-          type: "category",
+          type: isTimeSeries ? "time" : "category",
           // boundaryGap: this.chartType === "bar",
-          data: xAxisData,
+          data: isTimeSeries ? undefined : xAxisData,
           axisLine: {
             lineStyle: {
               color: "#e6e6e6",

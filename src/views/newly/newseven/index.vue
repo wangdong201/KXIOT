@@ -568,6 +568,8 @@ export default {
   height: calc(100vh - 64px);
   padding: 10px 20px;
   width: 100%;
+  background-color: #304156;
+  color: #fff;
 
   .box-hover:hover {
     transform: scale(1.03);

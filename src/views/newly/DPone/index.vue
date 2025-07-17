@@ -19,7 +19,7 @@
       <div>
         <span class="demonstration">选择查询日期</span>
         <el-date-picker
-          v-model="valueTime"
+          v-model="currentTabDate"
           type="date"
           placeholder="选择日期"
           @change="handleDateChange"
@@ -123,7 +123,7 @@
           <chart-component
             ref="chart2"
             :chart-data="chartDataMap['option2']"
-            :title="lookingData.title72 || '暂无' + '数据'"
+            :title="currentData.title || '暂无' + '数据'"
             :chartType="'smooth'"
             :height="'100%'"
           />
@@ -136,7 +136,7 @@
           <chart-component
             ref="chart3"
             :chart-data="chartDataMap['option3']"
-            :title="lookingData.title72 || '暂无' + '数据'"
+            :title="voltageData.title || '暂无' + '数据'"
             :showTimeBackground="false"
             :chartType="'smooth'"
             :height="'100%'"
@@ -150,7 +150,7 @@
           <chart-component
             ref="chart4"
             :chart-data="chartDataMap['option4']"
-            :title="lookingData.title72 || '暂无' + '数据'"
+            :title="powerData.title || '暂无' + '数据'"
             :showTimeBackground="false"
             :chartType="'smooth'"
             :height="'100%'"
@@ -164,7 +164,7 @@
           <chart-component
             ref="chart5"
             :chart-data="chartDataMap['option5']"
-            :title="lookingData.title72 || '暂无' + '数据'"
+            :title="powerfactorData.title || '暂无' + '数据'"
             :showTimeBackground="false"
             :chartType="'smooth'"
             :height="'100%'"
@@ -173,11 +173,11 @@
       </div>
     </div>
 
-    <!-- 弹窗 -->
+    <!-- 电表控制弹窗 -->
     <el-dialog
       title="电表控制"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="620px"
       :before-close="handleClose"
     >
       <div>{{ projectPath }}</div>
@@ -193,6 +193,23 @@
               v-for="btn in section.buttons"
               :key="btn.text"
               v-bind="btn.props"
+              @click="
+                btn.text === '读电表表号'
+                  ? readDbdslist()
+                  : btn.text === '读多功能参数'
+                  ? readDglxxlist()
+                  : btn.text === '手动关电'
+                  ? closePowerChange()
+                  : btn.text === '手动开电'
+                  ? openPowerChange()
+                  : btn.text === '解除手动'
+                  ? unmanualOffChange()
+                  : btn.text === '立即抄表'
+                  ? nowMeterChange()
+                  : btn.text === '手动录入底数'
+                  ? (dialogFormVisible = true)
+                  : null
+              "
             >
               <i :class="btn.icon"></i> {{ btn.text }}
             </el-button>
@@ -200,11 +217,78 @@
         </div>
       </div>
     </el-dialog>
+
+    <!-- 读取属性弹窗 -->
+    <el-dialog
+      :title="czstatus"
+      :visible.sync="dialogVisible2"
+      width="320px"
+      :before-close="handleClose2"
+      class="simple-reading-dialog"
+    >
+      <div class="simple-dialog-content" v-loading="loading">
+        <div v-if="!loading" class="content-wrapper">
+          <!-- 成功读取时显示数值 -->
+          <div
+            v-if="dialogContent && !dialogContent.includes('失败')"
+            class="reading-display"
+          >
+            <div class="data-card">
+              <div class="data-value">{{ dialogContent }}</div>
+            </div>
+          </div>
+
+          <!-- 失败时显示错误信息 -->
+          <div v-else class="error-display">
+            <div class="error-container">
+              <i class="el-icon-warning"></i>
+              <p class="error-text">{{ dialogContent }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+
+    <!-- 手动录入数据弹窗 -->
+    <el-dialog
+      title="手动录入底数"
+      width="340px"
+      :visible.sync="dialogFormVisible"
+    >
+      <el-form :model="form" :rules="formRules" ref="manualInputForm">
+        <el-form-item label="输入口令" label-width="85px" prop="mm">
+          <el-input size="mini" v-model="form.mm"></el-input>
+        </el-form-item>
+        <el-form-item label="电表底数" label-width="85px" prop="date">
+          <el-input size="mini" v-model="form.date"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitManualInputChange"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getlooking, getnewmess } from "@/api/system/ammeter";
+import {
+  getlooking,
+  getnewmess,
+  getvoltage,
+  getcurrent,
+  getpower,
+  getpowerfactor,
+  dbdslist,
+  dglxxlist,
+  getOpenPower,
+  getClosePower,
+  getUnmanualOff,
+  getNowMeter,
+  postManualInput,
+} from "@/api/system/ammeter";
 import ChartComponent from "@/components/echarts/ChartComponent.vue";
 
 export default {
@@ -213,14 +297,49 @@ export default {
   data() {
     return {
       lookingData: {},
+      voltageData: {},
+      currentData: {},
+      powerData: {},
+      powerfactorData: {},
       meterId: "",
-      valueTime: "",
       activeName: "option1",
       dialogVisible: false,
+      dialogVisible2: false,
+      dialogFormVisible: false,
+      czstatus: "操作提示",
+      dialogContent: "",
+      loading: false,
       indicatorStyle: { left: "0px", width: "0px" },
 
       // 基础配置
       projectPath: "",
+
+      form: {
+        id: "",
+        date: "",
+        mm: "",
+      },
+
+      formRules: {
+        mm: [{ required: true, message: "口令不能为空", trigger: "blur" }],
+        date: [
+          { required: true, message: "电表底数不能为空", trigger: "blur" },
+        ],
+      },
+      tabDates: {
+        option1: new Date(),
+        option2: new Date(),
+        option3: new Date(),
+        option4: new Date(),
+        option5: new Date(),
+      },
+      requestDateForTab: {
+        option1: null,
+        option2: null,
+        option3: null,
+        option4: null,
+        option5: null,
+      },
       tabs: [
         { name: "option1", label: "实时监测" },
         { name: "option2", label: "电流" },
@@ -248,9 +367,24 @@ export default {
           title: "电表操作命令",
           buttons: [
             {
-              text: "立即读表",
+              text: "立即抄表",
               icon: "el-icon-refresh",
-              props: { type: "success", size: "small" },
+              props: { size: "small" },
+            },
+            {
+              text: "手动开电",
+              icon: "el-icon-refresh",
+              props: { size: "small" },
+            },
+            {
+              text: "手动关电",
+              icon: "el-icon-refresh",
+              props: { size: "small" },
+            },
+            {
+              text: "解除手动",
+              icon: "el-icon-refresh",
+              props: { size: "small" },
             },
           ],
         },
@@ -273,7 +407,7 @@ export default {
           title: "发送属性",
           buttons: [
             {
-              text: "手动录入数据",
+              text: "手动录入底数",
               icon: "el-icon-edit",
               props: { size: "small" },
             },
@@ -284,12 +418,9 @@ export default {
       // 固定的图表数据
       chartDataMap: {
         option1: {
-          xAxisData: [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-            19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-            14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-            9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-          ],
+          xAxisData: Array.from({ length: 24 * 3 }, (_, i) =>
+            (i % 24).toString()
+          ),
           series: [
             {
               name: "小时用电",
@@ -299,79 +430,35 @@ export default {
           ],
         },
         option2: {
-          xAxisData: Array.from({ length: 24 * 3 }, (_, i) =>
-            (i % 24).toString()
-          ),
-          series: [
-            {
-              name: "A相电流",
-              color: "#37a2da",
-              data: [
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-                18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-                12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4,
-                5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-                22, 23,
-              ],
-            },
-          ],
+          xAxisData: [],
+          series: [],
         },
         option3: {
-          xAxisData: Array.from({ length: 24 * 3 }, (_, i) =>
-            (i % 24).toString()
-          ),
-          series: [
-            {
-              name: "A相电压",
-              color: "#37a2da",
-              data: [
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-                18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-                12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4,
-                5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-                22, 23,
-              ],
-            },
-          ],
+          xAxisData: [],
+          series: [],
         },
         option4: {
-          xAxisData: Array.from({ length: 24 * 3 }, (_, i) =>
-            (i % 24).toString()
-          ),
-          series: [
-            {
-              name: "有功功率",
-              color: "#37a2da",
-              data: [
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-                18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-                12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4,
-                5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-                22, 23,
-              ],
-            },
-          ],
+          xAxisData: [],
+          series: [],
         },
         option5: {
-          xAxisData: Array.from({ length: 24 * 3 }, (_, i) =>
-            (i % 24).toString()
-          ),
-          series: [
-            {
-              name: "A相功率因数",
-              color: "#37a2da",
-              data: [
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-                18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-                12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4,
-                5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-                22, 23,
-              ],
-            },
-          ],
+          xAxisData: [],
+          series: [],
         },
       },
     };
+  },
+
+  computed: {
+    // 当前激活tab的日期
+    currentTabDate: {
+      get() {
+        return this.tabDates[this.activeName] || "";
+      },
+      set(value) {
+        this.$set(this.tabDates, this.activeName, value);
+      },
+    },
   },
 
   watch: {
@@ -394,6 +481,10 @@ export default {
     if (this.meterId) {
       this.fetchMeterData();
       this.startNewmessPolling();
+      this.getvoltageData();
+      this.getcurrentData();
+      this.getpowerData();
+      this.getpowerfactorData();
     }
   },
   beforeDestroy() {
@@ -401,6 +492,9 @@ export default {
   },
 
   methods: {
+    getChartColors() {
+      return ["#6d2061", "#d8586a", "#f7c356", "#1A3269", "#257182"];
+    },
     handleTabClick(tab) {
       if (this.activeName === tab.name) return;
       this.activeName = tab.name;
@@ -440,39 +534,62 @@ export default {
       this.dialogVisible = false;
       done();
     },
+    handleClose2(done) {
+      this.dialogVisible2 = false;
+      done();
+    },
+
+    formatDate(date) {
+      if (date instanceof Date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+      return date;
+    },
+
+    buildRequestParams() {
+      const params = { id: this.meterId };
+      const currentDate = this.requestDateForTab[this.activeName];
+      if (currentDate) {
+        params.date = this.formatDate(currentDate);
+      }
+      return params;
+    },
 
     handleDateChange() {
-      console.log("日期选择:", this.valueTime);
-      if (this.meterId && this.valueTime) {
-        this.fetchMeterData();
+      this.requestDateForTab[this.activeName] = this.tabDates[this.activeName];
+      if (this.meterId && this.currentTabDate) {
+        switch (this.activeName) {
+          case "option1":
+            this.fetchMeterData();
+            break;
+          case "option2":
+            this.getcurrentData();
+            break;
+          case "option3":
+            this.getvoltageData();
+            break;
+          case "option4":
+            this.getpowerData();
+            break;
+          case "option5":
+            this.getpowerfactorData();
+            break;
+          default:
+            this.fetchMeterData();
+        }
       }
     },
 
     async fetchMeterData() {
       try {
-        const params = { id: this.meterId };
-        if (this.valueTime) {
-          // 将时间格式化为 YYYY-MM-DD 格式
-          const formatDate = (date) => {
-            if (date instanceof Date) {
-              const year = date.getFullYear();
-              const month = String(date.getMonth() + 1).padStart(2, "0");
-              const day = String(date.getDate()).padStart(2, "0");
-              return `${year}-${month}-${day}`;
-            }
-            return date;
-          };
-          params.date = formatDate(this.valueTime);
-        }
+        const params = this.buildRequestParams();
         const response = await getlooking(params);
         this.lookingData = response;
         this.valueTime = response.datatime;
         this.chartDataMap.option1.series[0].data = response.d72;
-
-        console.log(
-          "更新的电表数据:",
-          this.chartDataMap.option1.series[0].data
-        );
       } catch (error) {
         console.error("获取电表数据失败:", error);
         this.$message.error("获取电表数据失败");
@@ -483,7 +600,7 @@ export default {
       this.tableDataNewmess();
       this.newmessTimer = setInterval(() => {
         this.tableDataNewmess();
-      }, 300000);
+      }, 30000);
     },
     // 停止轮询
     stopNewmessPolling() {
@@ -502,12 +619,214 @@ export default {
         this.$message.error("获取新数据失败");
       }
     },
+
+    async getvoltageData() {
+      try {
+        const params = this.buildRequestParams();
+        const response3 = await getvoltage(params);
+        this.voltageData = response3;
+        const colors = this.getChartColors();
+        this.chartDataMap.option3 = {
+          xAxisData: response3.xAxisData || [],
+          series: (response3.series || []).map((item, index) => ({
+            ...item,
+            color: colors[index],
+          })),
+        };
+      } catch (error) {
+        console.error("获取电压数据失败:", error);
+        this.$message.error("获取电压数据失败");
+      }
+    },
+
+    async getcurrentData() {
+      try {
+        const params = this.buildRequestParams();
+        const response = await getcurrent(params);
+        this.currentData = response;
+        const colors = this.getChartColors();
+        this.chartDataMap.option2 = {
+          xAxisData: response.xAxisData || [],
+          series: (response.series || []).map((item, index) => ({
+            ...item,
+            color: colors[index],
+          })),
+        };
+      } catch (error) {
+        console.error("获取电流数据失败:", error);
+        this.$message.error("获取电流数据失败");
+      }
+    },
+
+    async getpowerData() {
+      try {
+        const params = this.buildRequestParams();
+        const response = await getpower(params);
+        this.powerData = response;
+        const colors = this.getChartColors();
+        this.chartDataMap.option4 = {
+          xAxisData: response.xAxisData || [],
+          series: (response.series || []).map((item, index) => ({
+            ...item,
+            color: colors[index],
+          })),
+        };
+      } catch (error) {
+        console.error("获取功率数据失败:", error);
+        this.$message.error("获取功率数据失败");
+      }
+    },
+
+    async getpowerfactorData() {
+      try {
+        const params = this.buildRequestParams();
+        const response = await getpowerfactor(params);
+        const colors = this.getChartColors();
+        this.powerfactorData = response;
+        this.chartDataMap.option5 = {
+          xAxisData: response.xAxisData || [],
+          series: (response.series || []).map((item, index) => ({
+            ...item,
+            color: colors[index],
+          })),
+        };
+      } catch (error) {
+        console.error("获取功率因数数据失败:", error);
+        this.$message.error("获取功率因数数据失败");
+      }
+    },
+
+    // 读取属性
+    async readDbdslist() {
+      this.showLoading();
+      try {
+        this.dialogVisible = true;
+        const response = await dbdslist(this.meterId);
+        this.dialogContent = response.data.show.replace(/&nbsp;/g, " ");
+      } catch (error) {
+        console.error("请求失败:", error);
+      } finally {
+        this.hideLoading();
+      }
+    },
+    async readDglxxlist() {
+      this.showLoading();
+      try {
+        this.dialogVisible = true;
+        const response = await dglxxlist(this.meterId);
+        this.dialogContent = response.data.show.replace(/&nbsp;/g, " ");
+      } catch (error) {
+        console.error("请求失败:", error);
+      } finally {
+        this.hideLoading();
+      }
+    },
+
+    // 关电
+    async closePowerChange() {
+      try {
+        const params = { id: this.meterId };
+        const response = await getClosePower(params);
+        const message = response.data.show;
+        this.$message({
+          message: message,
+          type: response.data.status,
+          showClose: true,
+        });
+      } catch (err) {
+        this.$message.error("关电失败，请稍后再试");
+      }
+    },
+    // 开电
+    async openPowerChange() {
+      try {
+        const params = { id: this.meterId };
+        const response = await getOpenPower(params);
+        const message = response.data.show;
+        this.$message({
+          message: message,
+          type: response.data.status,
+          showClose: true,
+        });
+      } catch (err) {
+        this.$message.error("开电失败，请稍后再试");
+      }
+    },
+
+    // 解除手动
+    async unmanualOffChange() {
+      try {
+        const params = { id: this.meterId };
+        const response = await getUnmanualOff(params);
+        const message = response.data.show;
+        this.$message({
+          message: message,
+          type: response.data.status,
+          showClose: true,
+        });
+      } catch (err) {
+        this.$message.error("解除手动失败，请稍后再试");
+      }
+    },
+
+    // 立即抄表
+    async nowMeterChange() {
+      try {
+        const params = { id: this.meterId };
+        const response = await getNowMeter(params);
+        const message = response.data.show;
+        this.$message({
+          message: message,
+          type: response.data.status,
+          showClose: true,
+        });
+      } catch (err) {
+        this.$message.error("抄表失败，请稍后再试");
+      }
+    },
+
+    // 手动录入底数
+    async submitManualInputChange() {
+      this.$refs.manualInputForm.validate(async (valid) => {
+        if (valid) {
+          const params = {
+            id: this.meterId,
+            date: this.form.date,
+            mm: this.form.mm,
+          };
+          try {
+            const response = await postManualInput(params);
+            this.form.date = "";
+            this.form.mm = "";
+            this.dialogFormVisible = false;
+            const message = response.data.show;
+            this.$message({
+              message: message,
+              type: response.data.status,
+              showClose: true,
+            });
+          } catch (error) {
+            this.$message.error("提交失败");
+          }
+        } else {
+          return false;
+        }
+      });
+    },
+    showLoading() {
+      this.dialogVisible2 = true;
+      this.loading = true;
+      this.dialogContent = "";
+    },
+    hideLoading() {
+      this.loading = false;
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
-@import "../../../assets/fonts/led.css";
+// @import "../../../assets/fonts/led.css";
 .dark {
   .data-item,
   .attr-item {
@@ -519,6 +838,7 @@ export default {
   padding: 5px 15px;
   min-height: calc(100vh - 84px);
 }
+
 
 ::v-deep .phase-data-table .el-table__body td:not(:first-child) {
   font-size: 17px !important;
@@ -534,7 +854,7 @@ export default {
   height: 45px;
   position: relative;
   display: flex;
-  border-bottom: 2px solid rgba(24, 144, 255, 0.9);
+  border-bottom: 2px solid rgba(248, 249, 250, 0.9);
   margin-bottom: 10px;
   border-radius: 4px 4px 0 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -709,7 +1029,6 @@ export default {
     .table-container {
       border-radius: 6px;
       height: 100%;
-
     }
   }
 }
@@ -764,6 +1083,86 @@ export default {
 
     .el-table ::v-deep .el-table__cell {
       padding: 4px 0;
+    }
+  }
+}
+
+.simple-dialog-content {
+  padding: 6px 5px 26px 5px;
+
+  .content-wrapper {
+    text-align: center;
+  }
+
+  .reading-display {
+    .data-card {
+      border-radius: 10px;
+      padding: 15px 5px;
+      margin-bottom: 15px;
+      // background-image: url("../../../assets/images/dudian.png");
+      // background-size: 100% 100%;
+      // background-position: center;
+      // background-repeat: no-repeat;
+      position: relative;
+
+      .data-value {
+        // font-family: electronicFont, "Courier New", monospace;
+        font-size: 20px;
+        font-weight: normal;
+        color: #0f3819;
+        letter-spacing: 3px;
+        line-height: 1.2;
+        padding: 10px 15px;
+        border-radius: 6px;
+        display: inline-block;
+      }
+
+      .data-label {
+        font-size: 12px;
+        color: #718096;
+        font-weight: 400;
+      }
+    }
+
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0fff4;
+      color: #38a169;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid #c6f6d5;
+
+      i {
+        font-size: 14px;
+      }
+
+      span {
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .error-display {
+    .error-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+
+      i {
+        font-size: 32px;
+        // color: #e53e3e;
+      }
+
+      .error-text {
+        font-size: 16px;
+        // color: #e53e3e;
+        margin: 0;
+        font-weight: 500;
+      }
     }
   }
 }

@@ -476,7 +476,7 @@ export default {
 .ammeter-dialog-form {
   display: flex;
   justify-content: space-around;
-  min-height: 420px;
+  // min-height: 420px;
   overflow: auto;
 
   .adf-right,

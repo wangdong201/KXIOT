@@ -51,6 +51,7 @@
       </el-form-item>
       <el-form-item label="通道号" prop="tdh" label-width="80px">
         <el-select
+          filterable
           v-model="queryParams.tdh"
           clearable
           placeholder="请选择"
@@ -88,6 +89,7 @@
         <el-select
           v-model="queryParams.statue"
           clearable
+          filterable
           placeholder="请选择电表状态"
           @keyup.enter.native="handleQuery"
           style="width: 100%"
@@ -319,6 +321,7 @@
 
             <el-form-item label="采集器" prop="gateway">
               <el-select
+                filterable
                 v-model="form.gateway"
                 placeholder="请选择采集器"
                 style="width: 100%"
@@ -334,6 +337,7 @@
             </el-form-item>
             <el-form-item label="类型" prop="type">
               <el-select
+                filterable
                 v-model="form.type"
                 placeholder="请选择类型"
                 style="width: 100%"
@@ -349,6 +353,7 @@
             </el-form-item>
             <el-form-item label="通道号" prop="tdh">
               <el-select
+                filterable
                 v-model="form.tdh"
                 placeholder="请选择"
                 style="width: 100%"
@@ -479,6 +484,7 @@
       >
         <el-form-item label="采集器" prop="gateway">
           <el-select
+            filterable
             v-model="plxgform.gateway"
             placeholder="请选择采集器"
             style="width: 100%"
@@ -494,6 +500,7 @@
         </el-form-item>
         <el-form-item label="类型" prop="type">
           <el-select
+            filterable
             v-model="plxgform.type"
             placeholder="请选择类型"
             style="width: 100%"
@@ -509,6 +516,7 @@
         </el-form-item>
         <el-form-item label="通道号" prop="tdh">
           <el-select
+            filterable
             v-model="plxgform.tdh"
             placeholder="请选择"
             style="width: 100%"
@@ -804,13 +812,12 @@ export default {
 
   mounted() {
     this.fetchUserInfo();
-    this.xgdid = this.$route.query.id;
+    this.xgdid = this.$route.query.xgdid;
     this.checkAndOpen();
   },
 
   watch: {
-    // 监听$route变化
-    "$route.query.id"(newId) {
+    "$route.query.xgdid"(newId) {
       this.xgdid = newId || null;
       this.checkAndOpen();
     },
@@ -1179,7 +1186,7 @@ export default {
 .ammeter-dialog-form {
   display: flex;
   justify-content: space-around;
-  min-height: 520px;
+  // min-height: 520px;
   overflow: auto;
 
   .adf-right,

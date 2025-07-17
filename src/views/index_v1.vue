@@ -76,7 +76,7 @@
                 <div slot="header" class="clearfix card-header">
                   <span>{{ item.name }}</span>
                 </div>
-                <div @click="detailDbdslist(item.id)">
+                <div @click="detailDbdslist(item.id)" style="cursor: pointer">
                   <div style="padding-top: 5px">
                     <span class="textspan">日用电量:</span>
                     <span class="textspan" style="margin-left: 0.3vw">
@@ -116,21 +116,21 @@
                     type="primary"
                     @click="readDbdslist(item.id)"
                     size="mini"
-                    style="flex: 1; white-space: nowrap; z-index: 999"
+                    style="flex: 1; white-space: nowrap"
                     >读电量</el-button
                   >
                   <el-button
                     type="primary"
                     @click="readDglxxlist(item.id)"
                     size="mini"
-                    style="flex: 1; white-space: nowrap; z-index: 999"
+                    style="flex: 1; white-space: nowrap"
                     >读多功能</el-button
                   >
                   <el-button
                     type="primary"
                     @click="modifyDbdslist(item.id)"
                     size="mini"
-                    style="flex: 1; white-space: nowrap; z-index: 999"
+                    style="flex: 1; white-space: nowrap"
                     >修改</el-button
                   >
                 </el-button-group>
@@ -350,7 +350,7 @@ export default {
         id: null,
         name: null,
         state: null,
-        txradio: null,
+        txradio: 1,
         zhmoney1: null,
         zhmoney2: null,
         deptId: null,
@@ -613,7 +613,7 @@ export default {
     modifyDbdslist(id) {
       this.$router.push({
         path: "/tool/ammeter",
-        query: { id },
+        query: { xgdid:id },
       });
     },
 
@@ -621,7 +621,7 @@ export default {
     detailDbdslist(id) {
       this.$router.push({
         path: "/newly/newly/DPone",
-        query: { id },
+        query: { id:id },
       });
       console.log("跳转电表详细信息", id);
     },

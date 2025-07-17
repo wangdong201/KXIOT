@@ -27,17 +27,17 @@
           <div class="Water-intake-content">
             <div
               class="Water-intake-content-item"
-              v-for="(item, index) in 4"
+              v-for="(item, index) in dataListOption"
               :key="index"
               :style="getBackgroundStyle(index)"
             >
               <div class="water-data"></div>
               <div class="water-svg">
-                <IconSvg icon="icon-shuiliang" color="#ffffff" fontSize="2vw" />
+                <IconSvg :icon="item.icon" color="#ffffff" fontSize="2vw" />
               </div>
               <div class="Water-data-text">
-                <div class="water-num">1215.5</div>
-                <div class="water-num-text">许可取水量(万m³)</div>
+                <div class="water-num">{{ item.value }}</div>
+                <div class="water-num-text">{{ item.label }}</div>
               </div>
             </div>
           </div>
@@ -52,11 +52,11 @@
         <div class="Warning-message overhdn">
           <div class="Water-intake-title">
             <IconSvg icon="icon-fuzhi" color="#6A80F0" fontSize="1vw" />
-            <span>预警消息</span>
+            <span>用电量</span>
           </div>
           <DynamicChart
             :chartData="data2"
-            :categories="categories"
+            :categories="categories2"
             :chartType="chartType2"
           />
         </div>
@@ -65,37 +65,29 @@
       <div class="one-right">
         <div class="water-resource">
           <div class="water-resource-item">
-            <div class="water-resource-svg">
-              <IconSvg
-                icon="icon-wangguangouhui"
-                color="#6B81F0"
-                fontSize="2vw"
-              />
+            <div class="water-resource-svg" @click="detailDBMeslist(deptId)">
+              <IconSvg icon="icon-idb" color="#6B81F0" fontSize="2vw" />
             </div>
             <div class="water-resource-text">
-              <div>超声波流量计</div>
-              <div><span>10</span>台</div>
+              <div class="cp-div">电表数:30</div>
+              <div class="cp-div">离线电表:20</div>
             </div>
           </div>
           <div class="water-line"></div>
           <div class="water-resource-item">
-            <div class="water-resource-svg2">
-              <IconSvg
-                icon="icon-shebeiguanli"
-                color="#8BC4F7"
-                fontSize="2vw"
-              />
+            <div class="water-resource-svg2" @click="detailDBMeslist(deptId)">
+              <IconSvg icon="icon-ind" color="#8BC4F7" fontSize="2vw" />
             </div>
             <div class="water-resource-text">
-              <div>超声波流量计</div>
-              <div><span>10</span>台</div>
+              <div class="cp-div">欠费断电:2</div>
+              <div class="cp-div">其他断电:3</div>
             </div>
           </div>
         </div>
         <div class="water-resource2">
           <div class="Water-intake-title">
             <IconSvg icon="icon-fuzhi" color="#6A80F0" fontSize="1vw" />
-            <span>水资源用途</span>
+            <span>能耗分项及月用电量</span>
           </div>
           <div class="water-resource-echart">
             <DynamicPieChart :chartData="data3" />
@@ -147,7 +139,7 @@ import PageHelp from "./components/describe.vue";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
-  name: "IndexOne",
+  name: "IndexFour",
   components: {
     DynamicChart,
     DynamicPieChart,
@@ -166,75 +158,91 @@ export default {
         children: "children",
         label: "label",
       },
+      dataListOption: [
+        { label: "今日存款", value: 12345, icon: "icon-iqb" },
+        { label: "用户数", value: 123456, icon: "icon-iyh" },
+        { label: "账户余额", value: 123456, icon: "icon-iye" },
+        { label: "实时功率（千瓦）", value: 123456, icon: "icon-igl" },
+      ],
       categories: [
-        "1月",
-        "2月",
-        "3月",
-        "4月",
-        "5月",
-        "6月",
-        "7月",
-        "8月",
-        "9月",
-        "10月",
-        "11月",
-        "12月",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+      ],
+      categories2: [
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+        20, 21, 22, 23,
       ],
       chartType: "line",
       chartType2: "bar",
       data: [
         {
-          name: "计算取水",
+          name: "日用电量",
           data: [
             16.12, 4.88, 12.75, 15.98, 13.24, 16.32, 14.56, 15.67, 13.88, 15.23,
-            14.45, 15.56,
+            14.45, 15.56, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 65,
+            25, 48, 95, 74, 512,
           ],
           colors: ["rgba(84, 160, 255, 0.5)", "rgba(84, 160, 255, 0)"], // 渐变蓝色
-        },
-        {
-          name: "实际取水",
-          data: [
-            11.88, 10.23, 9.45, 11.56, 10.02, 12.67, 11.23, 11.88, 10.56, 11.45,
-            10.88, 11.67,
-          ],
-          colors: ["rgba(255, 87, 34, 0.5)", "rgba(255, 87, 34, 0)"], // 渐变橙色
         },
       ],
       data2: [
         {
-          name: "报警次数",
-          data: [12, 15, 18, 20, 22, 25, 28, 30, 32, 35, 38, 40],
+          name: "小时用电量",
+          data: [
+            12, 15, 18, 20, 22, 25, 28, 30, 32, 35, 38, 40, 16.12, 4.88, 12.75,
+            15.98, 13.24, 16.32, 14.56, 15.67, 13.88, 15.23,
+          ],
           colors: ["rgba(142,158,242, 0.9)", "rgba(255, 87, 34, 0)"],
         },
       ],
       data3: [
-        { name: "生产用水", value: 8.123, color: "#5470C6" },
-        { name: "生活用水", value: 3.235, color: "#91CC75" },
-        { name: "绿化用水", value: 4.546, color: "#EE6666" },
+        { name: "生产用电", value: 8.123, color: "#5470C6" },
+        { name: "生活用电", value: 3.235, color: "#91CC75" },
+        { name: "绿化用电", value: 4.546, color: "#EE6666" },
+        { name: "其他用电", value: 1.123, color: "#FAC858" },
+        { name: "商业用电", value: 1.123, color: "#FAb636" },
+        { name: "工业用电", value: 2.345, color: "#73C0DE" },
+        { name: "农业用电", value: 1.456, color: "#3BA272" },
+        { name: "公共设施用电", value: 1.789, color: "#FC8452" },
+        { name: "教育用电", value: 1.123, color: "#9A60B4" },
+        { name: "医疗用电", value: 1.456, color: "#EA7CCC" },
       ],
       data4: [
         {
-          name: "生产用水",
+          name: "月用电量",
           data: [
             16.12, 4.88, 12.75, 15.98, 13.24, 16.32, 14.56, 15.67, 13.88, 15.23,
             14.45, 15.56,
           ],
           colors: ["rgba(84, 160, 255, 0.5)", "rgba(84, 160, 255, 0)"],
-        },
-        {
-          name: "生活用水",
-          data: [
-            11.88, 10.23, 9.45, 11.56, 10.02, 12.67, 11.23, 11.88, 10.56, 11.45,
-            10.88, 11.67,
-          ],
-          colors: ["rgba(255, 87, 34, 0.5)", "rgba(255, 87, 34, 0)"],
-        },
-        {
-          name: "绿化用水",
-          data: [
-            2.3, 10.3, 3.5, 4.6, 5.7, 6.8, 7.9, 9.1, 10.2, 11.3, 12.4, 13.5,
-          ],
-          colors: ["rgba(174,222,158, 0.5)", "rgba(174,222,158, 0)"],
         },
       ],
       helpConfig: [
@@ -331,6 +339,15 @@ export default {
     handleClose(done) {
       this.dialogVisible = false;
       done();
+    },
+
+    /** 跳转DBMes */
+    detailDBMeslist(id) {
+      this.$router.push({
+        path: "/newly/newly/newone",
+        query: { id: id },
+      });
+      console.log("跳转电表详细信息", id);
     },
     // 帮助组件事件处理
     onHelpOpened() {
@@ -465,12 +482,20 @@ export default {
               color: #fefefe;
 
               .water-num {
+                width: 100px;
+                padding-left: 30px;
                 font-size: 1.5vw;
                 font-weight: 500;
+                white-space: nowrap;
+                text-align: left;
               }
 
               .water-num-text {
-                font-size: 0.5vw;
+                width: 120px;
+                padding-left: 35px;
+                font-size: 0.71vw;
+                color: #ffffffa6;
+                white-space: nowrap;
               }
             }
           }
@@ -528,6 +553,7 @@ export default {
             display: flex;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
           }
 
           .water-resource-svg2 {
@@ -538,6 +564,7 @@ export default {
             display: flex;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
           }
 
           .water-resource-text {
@@ -546,6 +573,10 @@ export default {
             flex-direction: column;
             justify-content: space-between;
             margin-left: 1vw;
+
+            .cp-div {
+              cursor: pointer;
+            }
 
             span {
               font-size: 1.2vw;

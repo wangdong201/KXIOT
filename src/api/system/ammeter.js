@@ -104,5 +104,89 @@ export function getnewmess(data){
   })
 }
 
+// 电压
+export function getvoltage(data){
+  return request({
+    url: '/system/ammeter/dy',
+    method: 'get',
+     params: data,
+  })
+}
+
+// 电流
+export function getcurrent(data){
+  return request({
+    url: '/system/ammeter/dl',
+    method: 'get',
+     params: data,
+  })
+}
+
+// 功率
+export function getpower(data){
+  return request({
+    url: '/system/ammeter/gl',
+    method: 'get',
+     params: data,
+  })
+}
+
+
+// 功率因数
+export function getpowerfactor(data){
+  return request({
+    url: '/system/ammeter/glys',
+    method: 'get',
+     params: data,
+  })
+}
+
+// 关电
+export function getClosePower(data){
+  return request({
+    url: '/system/ammeter/close',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 开电
+export function getOpenPower(data){
+  return request({
+    url: '/system/ammeter/open',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 解除手动
+export function getUnmanualOff(data){
+  return request({
+    url: '/system/ammeter/off',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 立即抄表
+export function getNowMeter(data){
+  return request({
+    url: '/system/ammeter/chaobiao',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 手动录入底数
+export function postManualInput(data){
+  return request({
+    url: '/system/ammeter/sdlr',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
 
 
