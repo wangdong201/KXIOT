@@ -9,9 +9,9 @@ const user = {
     avatar: '',
     roles: [],
     permissions: [],
-    // alone: '',
-    // alonelist: [],
-    // dialtype: [],
+    alone: '',
+    alonelist: [],
+    dialtype: [],
   },
 
   mutations: {

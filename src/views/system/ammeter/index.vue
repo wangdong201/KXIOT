@@ -131,6 +131,23 @@
           style="width: 100px"
         />
       </el-form-item>
+      <el-form-item label="电表属性" prop="dshuxing" label-width="80px">
+        <el-select
+          filterable
+          clearable
+          v-model="queryParams.dshuxing"
+          placeholder="请选择"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="item in dsxlist"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="通讯时间" prop="txradio" label-width="80px">
         <el-radio v-model="queryParams.txradio" label="1">之前</el-radio>
         <el-radio v-model="queryParams.txradio" label="2">之后</el-radio>
@@ -244,6 +261,7 @@
         v-for="col in commonColumns"
         :key="col.prop"
         :label="col.label"
+        :width="col.width"
         align="center"
         :prop="col.prop"
         show-overflow-tooltip
@@ -261,17 +279,20 @@
       <el-table-column
         label="入库时间"
         align="center"
-        prop="usetime"
+        prop="cbtime"
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.usetime, "{y}-{m}-{d}") }}</span>
+          <span>{{
+            parseTime(scope.row.cbtime, "{y}-{m}-{d} {h}:{i}:{s}")
+          }}</span>
         </template>
       </el-table-column>
 
       <el-table-column
         label="操作"
         align="center"
+        width="180"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
@@ -290,6 +311,13 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:ammeter:remove']"
             >删除</el-button
+          >
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-thumb"
+            @click="handleOperate(scope.row)"
+            >操作</el-button
           >
         </template>
       </el-table-column>
@@ -322,6 +350,7 @@
             <el-form-item label="采集器" prop="gateway">
               <el-select
                 filterable
+                clearable
                 v-model="form.gateway"
                 placeholder="请选择采集器"
                 style="width: 100%"
@@ -338,6 +367,7 @@
             <el-form-item label="类型" prop="type">
               <el-select
                 filterable
+                clearable
                 v-model="form.type"
                 placeholder="请选择类型"
                 style="width: 100%"
@@ -354,6 +384,7 @@
             <el-form-item label="通道号" prop="tdh">
               <el-select
                 filterable
+                clearable
                 v-model="form.tdh"
                 placeholder="请选择"
                 style="width: 100%"
@@ -363,6 +394,23 @@
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="电表属性" prop="dshuxing">
+              <el-select
+                filterable
+                clearable
+                v-model="form.dshuxing"
+                placeholder="请选择"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in dsxlist"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
                 >
                 </el-option>
               </el-select>
@@ -485,6 +533,7 @@
         <el-form-item label="采集器" prop="gateway">
           <el-select
             filterable
+            clearable
             v-model="plxgform.gateway"
             placeholder="请选择采集器"
             style="width: 100%"
@@ -501,6 +550,7 @@
         <el-form-item label="类型" prop="type">
           <el-select
             filterable
+            clearable
             v-model="plxgform.type"
             placeholder="请选择类型"
             style="width: 100%"
@@ -517,6 +567,7 @@
         <el-form-item label="通道号" prop="tdh">
           <el-select
             filterable
+            clearable
             v-model="plxgform.tdh"
             placeholder="请选择"
             style="width: 100%"
@@ -526,6 +577,23 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="电表属性" prop="dshuxing">
+          <el-select
+            filterable
+            clearable
+            v-model="plxgform.dshuxing"
+            placeholder="请选择"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in dsxlist"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
             >
             </el-option>
           </el-select>
@@ -586,7 +654,12 @@ import {
   addAmmeter,
   updateAmmeter,
 } from "@/api/system/ammeter";
-import { deptTreeSelectroom, seleGatlist } from "@/api/system/user";
+
+import {
+  deptTreeSelectroom,
+  seleGatlist,
+  getDsxingList,
+} from "@/api/system/user";
 
 import { mapState } from "vuex";
 
@@ -609,6 +682,8 @@ export default {
       alone: "",
       // 采集器列表
       gatewayList: [],
+      // 电属性列表
+      dsxlist: [],
       // 电表数据
       dialtype: [],
       // 独立用户数据
@@ -668,7 +743,7 @@ export default {
         xingzhi: null,
         weizhi: null,
         beizhu: null,
-        usetime: null,
+        cbtime: null,
         dbds: null,
         dbdsj: null,
         dbdsf: null,
@@ -685,6 +760,7 @@ export default {
         type: null,
         tdh: null,
         danjia: null,
+        dshuxing: null,
         duandian: null,
       },
       // 表单参数3
@@ -726,20 +802,20 @@ export default {
       },
       // 默认显示的列
       commonColumns: [
-        { label: "序号", prop: "id" },
+        { label: "序号", prop: "id", width: 50 },
         { label: "名称", prop: "name" },
-
         { label: "类型", prop: "type" },
         { label: "采集器", prop: "gateway" },
         { label: "电表号", prop: "dbh" },
         { label: "通道号", prop: "tdh" },
         { label: "电表状态", prop: "statue" },
+        { label: "房间", prop: "room", width: 70 },
+        { label: "余额", prop: "balance", width: 70 },
       ],
       conditionalColumns: [
         { label: "ip", prop: "ip" },
         { label: "电压比", prop: "dyb" },
         { label: "电流比", prop: "beilv" },
-
         { label: "第二路状态", prop: "statue2" },
         { label: "用户", prop: "build" },
         { label: "属性", prop: "dshuxing" },
@@ -779,8 +855,11 @@ export default {
         { id: 4, name: "手动关电" },
         { id: 5, name: "欠费断电" },
         { id: 6, name: "定时关电" },
-        { id: 2, name: "正常" },
+        { id: 2, name: "正常开电" },
         { id: 100, name: "通讯失败" },
+        { id: 7, name: "过载跳电" },
+        { id: 8, name: "恶性负载" },
+        { id: 80, name: "余额不足" },
       ],
     };
   },
@@ -805,6 +884,7 @@ export default {
     this.getList();
     this.deptTreeroom();
     this.fetchGatewayList();
+    this.dsxListData();
     if (this.form.type !== null) {
       this.form.type = this.form.type;
     }
@@ -827,52 +907,39 @@ export default {
     "$route.query": {
       immediate: true,
       handler(newQuery) {
-        if (Object.keys(newQuery).length === 0) return;
-        // 转换参数格式
-        const processedParams = this.processRouteParams(newQuery);
-        // 合并参数（保留原有非冲突参数）
-        this.queryParams = {
-          ...this.queryParams,
-          ...processedParams,
-        };
-        this.getList();
-        // 清除路由参数（保留编辑参数）
-        this.cleanFilterParams(newQuery);
+        if (Object.keys(newQuery).length > 0) {
+          this.processRouteParams();
+        }
       },
     },
   },
 
   methods: {
-    /** 路由参数预处理 */
-    processRouteParams(query) {
-      const params = { ...query };
-      // 处理数组类型参数（build字段）
-      if (params.build) {
-        params.build = Array.isArray(params.build)
-          ? params.build.map(Number)
-          : [Number(params.build)];
+    /**
+     * 处理路由参数
+     */
+    processRouteParams() {
+      const query = this.$route.query;
+
+      // 处理现有的参数
+      if (query.xgdid) {
+        this.xgdid = query.xgdid;
       }
-      // 转换数字类型参数
-      const numberFields = ["gateway", "type", "statue", "pageNum", "pageSize"];
-      numberFields.forEach((key) => {
-        if (params[key]) params[key] = Number(params[key]);
-      });
-      // 处理日期参数（示例）
-      if (params.tongxtime) {
-        params.tongxtime = new Date(params.tongxtime);
-      }
-      return params;
-    },
-    /** 清除筛选参数 */
-    cleanFilterParams(originalQuery) {
-      const paramsToClean = Object.keys(originalQuery).filter(
-        (key) => key !== "id" // 保留编辑参数
-      );
-      const query = { ...this.$route.query };
-      paramsToClean.forEach((key) => delete query[key]);
-      // 避免空参数残留
-      if (Object.keys(query).length !== Object.keys(this.$route.query).length) {
-        this.$router.replace({ query });
+
+      // 处理来自newone页面的参数
+      if (query.statue || query.buildId) {
+        if (query.statue) {
+          this.queryParams.statue = parseInt(query.statue);
+        }
+
+        // 处理 id 参数
+        if (query.buildId) {
+          this.queryParams.build = [parseInt(query.buildId)];
+        }
+
+        this.$nextTick(() => {
+          this.getList();
+        });
       }
     },
     /** 检查并打开弹出层的逻辑 */
@@ -909,9 +976,19 @@ export default {
         this.gatewayList = response.data;
       });
     },
+
+    /** 电属性列表 */
+    dsxListData() {
+      getDsxingList()
+        .then((response) => {
+          this.dsxlist = response.data;
+        })
+        .catch((error) => {
+          console.error("获取电属性列表失败:", error);
+        });
+    },
     /** 查询电列表 */
     getList() {
-      // console.log("请求参数：", JSON.parse(JSON.stringify(this.queryParams))); // 深度拷贝打印
       this.loading = true;
       listAmmeter(this.queryParams).then((response) => {
         this.ammeterList = response.rows;
@@ -922,7 +999,6 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
-      this.$router.replace({ query: null }).catch(() => {});
       this.reset();
     },
     Plcancel() {
@@ -961,7 +1037,7 @@ export default {
         xingzhi: null,
         weizhi: null,
         beizhu: null,
-        usetime: null,
+        cbtime: null,
         dbds: null,
         dbdsj: null,
         dbdsf: null,
@@ -989,20 +1065,24 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.resetForm("queryForm");
       this.queryParams = {
-        ...this.queryParams, // 保留分页参数
         pageNum: 1,
+        pageSize: 10,
         name: null,
         gateway: null,
         type: null,
         tdh: null,
         dbh: null,
-        statue: null,
+        statue: this.$route.query.typeValue
+          ? parseInt(this.$route.query.typeValue)
+          : null,
         build: [],
         tongxtime: null,
         zhmoney1: null,
         zhmoney2: null,
         txradio: null,
+        dshuxing: null,
       };
       this.$nextTick(() => {
         this.$refs.queryForm?.clearValidate();
@@ -1010,10 +1090,7 @@ export default {
           this.$refs.treeselect.setValue(null);
         }
       });
-      // this.resetForm("queryForm");
-      this.$router.replace({ query: {} }).catch(() => {});
-      // this.handleQuery();
-      this.getList();
+      this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -1085,6 +1162,17 @@ export default {
         })
         .catch(() => {});
     },
+
+    /** 操作按钮 */
+    handleOperate(row) {
+      this.$router.push({
+        path: "/newly/newly/DPone",
+        query: {
+          id: row.id,
+        },
+      });
+    },
+
     /** 导出按钮操作 */
     handleExport() {
       this.download(
@@ -1104,6 +1192,7 @@ export default {
         type: null,
         tdh: null,
         danjia: null,
+        dshuxing: null,
         duandian: null,
       };
       this.open2 = true;

@@ -296,6 +296,7 @@ export default {
   components: { ChartComponent },
   data() {
     return {
+      id: null,
       lookingData: {},
       voltageData: {},
       currentData: {},
@@ -342,8 +343,8 @@ export default {
       },
       tabs: [
         { name: "option1", label: "实时监测" },
-        { name: "option2", label: "电流" },
         { name: "option3", label: "电压" },
+        { name: "option2", label: "电流" },
         { name: "option4", label: "功率" },
         { name: "option5", label: "功率因数" },
       ],
@@ -838,7 +839,6 @@ export default {
   padding: 5px 15px;
   min-height: calc(100vh - 84px);
 }
-
 
 ::v-deep .phase-data-table .el-table__body td:not(:first-child) {
   font-size: 17px !important;

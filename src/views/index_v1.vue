@@ -623,7 +623,6 @@ export default {
         path: "/newly/newly/DPone",
         query: { id:id },
       });
-      console.log("跳转电表详细信息", id);
     },
 
     /** 显示加载中状态 */

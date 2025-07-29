@@ -48,7 +48,10 @@ export default {
     }),
   },
   watch: {
-    chartData: "updateChart",
+    chartData: {
+      handler: "updateChart",
+      deep: true,
+    },
     chartType: "updateChart",
     count: function () {
       this.setChartColor(); // 在 count 变化时设置图表颜色

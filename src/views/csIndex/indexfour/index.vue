@@ -30,6 +30,15 @@
               v-for="(item, index) in dataListOption"
               :key="index"
               :style="getBackgroundStyle(index)"
+              @click="
+                index === 0
+                  ? detailPaylist()
+                  : index === 1
+                  ? detailRoomlist(deptId)
+                  : index === 2
+                  ? detailIndex()
+                  : null
+              "
             >
               <div class="water-data"></div>
               <div class="water-svg">
@@ -43,7 +52,7 @@
           </div>
           <div class="Water-intake-echart overhdn">
             <DynamicChart
-              :chartData="data"
+              :chartData="dayData"
               :categories="categories"
               :chartType="chartType"
             />
@@ -55,7 +64,7 @@
             <span>用电量</span>
           </div>
           <DynamicChart
-            :chartData="data2"
+            :chartData="hourData"
             :categories="categories2"
             :chartType="chartType2"
           />
@@ -69,8 +78,8 @@
               <IconSvg icon="icon-idb" color="#6B81F0" fontSize="2vw" />
             </div>
             <div class="water-resource-text">
-              <div class="cp-div">电表数:30</div>
-              <div class="cp-div">离线电表:20</div>
+              <div class="cp-div">电表数:{{ BuildInfoData.m5 }}</div>
+              <div class="cp-div">离线电表:{{ BuildInfoData.m6 }}</div>
             </div>
           </div>
           <div class="water-line"></div>
@@ -79,8 +88,8 @@
               <IconSvg icon="icon-ind" color="#8BC4F7" fontSize="2vw" />
             </div>
             <div class="water-resource-text">
-              <div class="cp-div">欠费断电:2</div>
-              <div class="cp-div">其他断电:3</div>
+              <div class="cp-div">欠费断电:{{ BuildInfoData.m7 }}</div>
+              <div class="cp-div">其他断电:{{ BuildInfoData.m8 }}</div>
             </div>
           </div>
         </div>
@@ -90,12 +99,12 @@
             <span>能耗分项及月用电量</span>
           </div>
           <div class="water-resource-echart">
-            <DynamicPieChart :chartData="data3" />
+            <DynamicPieChart :chartData="dshuxingData" />
           </div>
           <div class="water-resource-echart">
             <DynamicChart
-              :chartData="data4"
-              :categories="categories"
+              :chartData="monthData"
+              :categories="categories3"
               :chartType="chartType"
             />
           </div>
@@ -125,7 +134,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmSelection">确 定</el-button>
+        <!-- <el-button type="primary" @click="confirmSelection">确 定</el-button> -->
       </span>
     </el-dialog>
   </div>
@@ -133,7 +142,8 @@
 
 <script>
 import { deptTreeSelect } from "@/api/system/user";
-import DynamicChart from "./components/DynamicChart .vue";
+import { getBuildInfo } from "@/api/system/room";
+import DynamicChart from "./components/DynamicChart.vue";
 import DynamicPieChart from "./components/DynamicPieChart.vue";
 import PageHelp from "./components/describe.vue";
 import Treeselect from "@riophae/vue-treeselect";
@@ -154,15 +164,16 @@ export default {
       title: "请选择项目",
       selectedNode: null,
       expandedKeys: [],
+      BuildInfoData: {},
       defaultProps: {
         children: "children",
         label: "label",
       },
       dataListOption: [
-        { label: "今日存款", value: 12345, icon: "icon-iqb" },
-        { label: "用户数", value: 123456, icon: "icon-iyh" },
-        { label: "账户余额", value: 123456, icon: "icon-iye" },
-        { label: "实时功率（千瓦）", value: 123456, icon: "icon-igl" },
+        { label: "今日存款", value: "", icon: "icon-iqb" },
+        { label: "用户数", value: "", icon: "icon-iyh" },
+        { label: "账户充值", value: "", icon: "icon-iye" },
+        { label: "实时功率（千瓦）", value: "", icon: "icon-igl" },
       ],
       categories: [
         "1",
@@ -195,54 +206,50 @@ export default {
         "28",
         "29",
         "30",
+        "31",
       ],
       categories2: [
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
         20, 21, 22, 23,
       ],
+      categories3: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       chartType: "line",
       chartType2: "bar",
-      data: [
+      dayData: [
         {
-          name: "日用电量",
-          data: [
-            16.12, 4.88, 12.75, 15.98, 13.24, 16.32, 14.56, 15.67, 13.88, 15.23,
-            14.45, 15.56, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 65,
-            25, 48, 95, 74, 512,
-          ],
+          name: "今日用电量",
+          data: [],
           colors: ["rgba(84, 160, 255, 0.5)", "rgba(84, 160, 255, 0)"], // 渐变蓝色
         },
-      ],
-      data2: [
         {
-          name: "小时用电量",
-          data: [
-            12, 15, 18, 20, 22, 25, 28, 30, 32, 35, 38, 40, 16.12, 4.88, 12.75,
-            15.98, 13.24, 16.32, 14.56, 15.67, 13.88, 15.23,
-          ],
-          colors: ["rgba(142,158,242, 0.9)", "rgba(255, 87, 34, 0)"],
+          name: "昨日用电量",
+          data: [],
+          colors: ["rgba(255, 195, 113, 0.5)", "rgba(255, 195, 113, 0)"],
         },
       ],
-      data3: [
-        { name: "生产用电", value: 8.123, color: "#5470C6" },
-        { name: "生活用电", value: 3.235, color: "#91CC75" },
-        { name: "绿化用电", value: 4.546, color: "#EE6666" },
-        { name: "其他用电", value: 1.123, color: "#FAC858" },
-        { name: "商业用电", value: 1.123, color: "#FAb636" },
-        { name: "工业用电", value: 2.345, color: "#73C0DE" },
-        { name: "农业用电", value: 1.456, color: "#3BA272" },
-        { name: "公共设施用电", value: 1.789, color: "#FC8452" },
-        { name: "教育用电", value: 1.123, color: "#9A60B4" },
-        { name: "医疗用电", value: 1.456, color: "#EA7CCC" },
-      ],
-      data4: [
+      hourData: [
         {
-          name: "月用电量",
-          data: [
-            16.12, 4.88, 12.75, 15.98, 13.24, 16.32, 14.56, 15.67, 13.88, 15.23,
-            14.45, 15.56,
-          ],
+          name: "当前小时用电量",
+          data: [],
+          colors: ["rgba(142,158,242, 0.9)", "rgba(255, 87, 34, 0)"],
+        },
+        {
+          name: "上小时用电量",
+          data: [],
+          colors: ["rgba(255, 195, 113, 0.5)", "rgba(255, 195, 113, 0)"],
+        },
+      ],
+      dshuxingData: [],
+      monthData: [
+        {
+          name: "本月用电量",
+          data: [],
           colors: ["rgba(84, 160, 255, 0.5)", "rgba(84, 160, 255, 0)"],
+        },
+        {
+          name: "上月用电量",
+          data: [],
+          colors: ["rgba(142,158,242, 0.9)", "rgba(255, 87, 34, 0)"],
         },
       ],
       helpConfig: [
@@ -286,33 +293,121 @@ export default {
     };
   },
   created() {
-    this.getDeptTree();
+    this.initPageData();
   },
   methods: {
+    /** 初始化页面数据 */
+    initPageData() {
+      this.getDeptTree();
+    },
+
     /** 查询部门下拉树结构 */
     getDeptTree() {
       deptTreeSelect().then((response) => {
         this.deptOptions = response.data;
-        if (response.data && response.data.length > 0) {
+
+        // 尝试从localStorage获取之前选择的部门
+        const savedDeptInfo = this.getSavedDeptInfo();
+
+        if (
+          savedDeptInfo &&
+          this.findNodeInTree(response.data, savedDeptInfo.id)
+        ) {
+          // 如果找到了之前保存的部门，使用保存的数据
+          this.title = savedDeptInfo.label;
+          this.selectedNode = savedDeptInfo;
+          this.deptId = savedDeptInfo.id;
+        } else if (response.data && response.data.length > 0) {
+          // 否则使用默认的第一个部门
           this.title = response.data[0].label;
           this.selectedNode = response.data[0];
           this.deptId = response.data[0].id;
+          // 保存默认选择
+          this.saveDeptInfo(response.data[0]);
         }
+
+        // 获取部门数据
+        this.getBuildInfoData();
       });
     },
-    /** 处理树节点选择事件 */
+
+    /** 从localStorage获取保存的部门信息 */
+    getSavedDeptInfo() {
+      try {
+        const saved = localStorage.getItem("indexFour_selectedDept");
+        return saved ? JSON.parse(saved) : null;
+      } catch (error) {
+        console.error("获取保存的部门信息失败:", error);
+        return null;
+      }
+    },
+
+    /** 保存localStorage */
+    saveDeptInfo(deptInfo) {
+      try {
+        const saveData = {
+          id: deptInfo.id,
+          label: deptInfo.label,
+        };
+        localStorage.setItem(
+          "indexFour_selectedDept",
+          JSON.stringify(saveData)
+        );
+      } catch (error) {
+        console.error("保存部门信息失败:", error);
+      }
+    },
+
+    /** 查找指定ID的节点 */
+    findNodeInTree(tree, targetId) {
+      for (let node of tree) {
+        if (node.id === targetId) {
+          return node;
+        }
+        if (node.children && node.children.length > 0) {
+          const found = this.findNodeInTree(node.children, targetId);
+          if (found) return found;
+        }
+      }
+      return null;
+    },
+
+    /** 处理事件 */
     handleNodeSelect(node) {
       this.selectedNode = node;
       console.log("选中的节点:", node);
-    },
-    confirmSelection() {
       if (this.selectedNode) {
         this.title = this.selectedNode.label;
         this.deptId = this.selectedNode.id;
         this.dialogVisible = false;
+        this.saveDeptInfo(this.selectedNode);
+        this.getBuildInfoData();
       } else {
         this.$message.warning("请先选择一个项目");
       }
+    },
+
+    /** 数据接口 */
+    getBuildInfoData() {
+      const params = { id: this.deptId };
+      getBuildInfo(params)
+        .then((response) => {
+          this.BuildInfoData = response;
+          this.dataListOption[0].value = this.BuildInfoData.m1;
+          this.dataListOption[1].value = this.BuildInfoData.m2;
+          this.dataListOption[2].value = this.BuildInfoData.m3;
+          this.dataListOption[3].value = this.BuildInfoData.m4;
+          this.dayData[0].data = response.day1;
+          this.dayData[1].data = response.day2;
+          this.hourData[0].data = response.hour1;
+          this.hourData[1].data = response.hour2;
+          this.dshuxingData = response.dshuxing;
+          this.monthData[0].data = response.month1;
+          this.monthData[1].data = response.month2;
+        })
+        .catch((error) => {
+          console.error("获取项目信息失败", error);
+        });
     },
 
     renderContent(h, { node, data }) {
@@ -347,8 +442,30 @@ export default {
         path: "/newly/newly/newone",
         query: { id: id },
       });
-      console.log("跳转电表详细信息", id);
     },
+
+    /** 跳转房间页面 */
+    detailRoomlist(id) {
+      this.$router.push({
+        path: "/tool/room",
+        query: { id: id },
+      });
+    },
+
+    /** 跳转缴费报表 */
+    detailPaylist() {
+      this.$router.push({
+        path: "/tool/paymentreport",
+      });
+    },
+
+    /** 跳转首页 */
+    detailIndex() {
+      this.$router.push({
+        path: "/index",
+      });
+    },
+
     // 帮助组件事件处理
     onHelpOpened() {
       console.log("帮助说明已打开");
@@ -434,6 +551,7 @@ export default {
           margin-top: 0.5vw;
           display: flex;
           justify-content: space-between;
+          cursor: pointer;
 
           .Water-intake-content-item {
             width: calc(25% - 15px);

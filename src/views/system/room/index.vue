@@ -8,18 +8,26 @@
       v-show="showSearch"
       label-width="68px"
     >
+      <el-form-item label="建筑" prop="build">
+        <treeselect
+          v-model="queryParams.build"
+          :options="deptOptionsroom"
+          placeholder="请选择或者搜索归属房间"
+          :show-count="true"
+          :disable-branch-nodes="false"
+          search-nested
+          :multiple="multiple"
+          style="width: 213px"
+          :max-height="200"
+          :clearable="true"
+          :limit="1"
+          :limit-text="(count) => `已选${count + 1}项`"
+        />
+      </el-form-item>
       <el-form-item label="名称" prop="name">
         <el-input
           v-model="queryParams.name"
           placeholder="请输入名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="建筑id" prop="build">
-        <el-input
-          v-model="queryParams.build"
-          placeholder="请输入建筑id"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -41,15 +49,48 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="编号" prop="number">
+        <el-input
+          v-model="queryParams.number"
+          placeholder="请输入编号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="缴费" prop="jiaofei">
+        <el-select v-model="queryParams.jiaofei" clearable placeholder="请选择">
+          <el-option label="允许缴费" value="0"></el-option>
+          <el-option label="禁止缴费" value="1"></el-option>
+        </el-select>
+      </el-form-item>
 
-      <el-form-item label="独立用户" prop="alone">
+      <el-form-item label="账户金额" prop="zhmoney1" label-width="80px">
+        <el-input
+          v-model="queryParams.zhmoney1"
+          placeholder="输入金额"
+          clearable
+          @keyup.enter.native="handleQuery"
+          style="width: 100px"
+        />
+      </el-form-item>
+      <el-form-item label="至" prop="zhmoney2" label-width="25px">
+        <el-input
+          v-model="queryParams.zhmoney2"
+          clearable
+          placeholder="输入金额"
+          @keyup.enter.native="handleQuery"
+          style="width: 100px"
+        />
+      </el-form-item>
+
+      <!-- <el-form-item label="独立用户" prop="alone">
         <el-input
           v-model="queryParams.alone"
           placeholder="请输入独立用户"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button
           type="primary"
@@ -125,16 +166,15 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
       <el-table-column label="名称" align="center" prop="name" />
-      <el-table-column label="类型" align="center" prop="type" />
-      <el-table-column label="建筑id" align="center" prop="build" />
+      <el-table-column label="建筑名称" align="center" prop="build" />
       <el-table-column label="显示顺序" align="center" prop="orderNum" />
       <el-table-column label="负责人" align="center" prop="leader" />
       <el-table-column label="联系电话" align="center" prop="phone" />
-      <el-table-column label="是否允许缴费" align="center" prop="jiaofei" />
-      <el-table-column label="推送档位" align="center" prop="tuisong" />
+      <el-table-column label="余额" align="center" prop="balance" />
+      <!-- <el-table-column label="缴费" align="center" prop="jiaofei" /> -->
+      <el-table-column label="是否允许缴费" align="center" prop="state" />
       <el-table-column label="地址" align="center" prop="weizhi" />
       <el-table-column label="备注" align="center" prop="beizhu" />
-      <el-table-column label="独立用户" align="center" prop="alone" />
       <el-table-column
         label="操作"
         align="center"
@@ -220,6 +260,9 @@
             <el-form-item label="备注" prop="beizhu">
               <el-input v-model="form.beizhu" placeholder="请输入备注" />
             </el-form-item>
+            <el-form-item label="编号" prop="number">
+              <el-input v-model="form.number" placeholder="请输入编号" />
+            </el-form-item>
             <el-form-item v-if="alone === 1" label="独立用户" prop="alone">
               <el-select
                 v-model="form.alone"
@@ -268,6 +311,8 @@ export default {
   },
   data() {
     return {
+      // 房间树
+      deptOptionsroom: [],
       // 独立用户数据
       alonelist: [],
       // 判断是否独立用户
@@ -314,6 +359,10 @@ export default {
         weizhi: null,
         beizhu: null,
         alone: null,
+        number: null,
+        jiaofei: null,
+        zhmoney1: null,
+        zhmoney2: null,
       },
       // 表单参数
       form: {},
@@ -360,6 +409,7 @@ export default {
     getDeptTree() {
       deptTreeSelect().then((response) => {
         this.deptOptions = response.data;
+        this.deptOptionsroom = response.data;
       });
     },
     // 取消按钮
@@ -387,6 +437,10 @@ export default {
         weizhi: null,
         beizhu: null,
         alone: null,
+        number: null,
+        jiaofei: null,
+        zhmoney1: null,
+        zhmoney2: null,
       };
       this.resetForm("form");
     },

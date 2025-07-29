@@ -151,4 +151,12 @@ export function seleGatlist() {
   })
 }
 
+// /dsxinglist
+export function getDsxingList(){
+  return request({
+    url: '/system/user/dsxinglist',
+    method: 'get'
+  })
+}
+
 

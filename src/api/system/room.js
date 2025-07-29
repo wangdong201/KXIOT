@@ -51,3 +51,12 @@ export function getBuildInfo1(data) {
     params: data
   })
 }
+
+// /system/room/buildinfo
+export function getBuildInfo(data) {
+  return request({
+    url: '/system/room/buildinfo',
+    method: 'get',
+    params: data
+  })
+}

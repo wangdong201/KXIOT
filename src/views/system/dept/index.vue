@@ -143,8 +143,8 @@
     </el-table>
 
     <!-- 添加或修改部门对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="650px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="24" v-if="form.parentId !== 0">
             <el-form-item label="上级建筑" prop="parentId">
@@ -272,7 +272,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="是否缴费" prop="pay">
+            <el-form-item label="手机端展示" prop="pay">
               <el-select v-model="form.pay" placeholder="请选择">
                 <el-option
                   v-for="item in payoptions"
@@ -285,7 +285,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <!-- <el-row>
           <el-col :span="24">
             <el-form-item label="扣费" prop="koufei">
               <el-radio-group v-model="form.koufei">
@@ -295,8 +295,8 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
+        </el-row> -->
+        <!-- <el-row>
           <el-col :span="24">
             <el-form-item
               label="是否手动开关电"
@@ -306,7 +306,7 @@
               <el-checkbox v-model="form.shoudong">备选项</el-checkbox>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -339,12 +339,12 @@ export default {
       xtoptions: [
         { value: 1, label: "电" },
         { value: 2, label: "水" },
-        { value: 4, label: "汽" },
+        { value: 4, label: "气" },
       ],
       // 缴费类型
       payoptions: [
-        { value: 0, label: "允许缴费" },
-        { value: 1, label: "禁止缴费" },
+        { value: 0, label: "允许展示" },
+        { value: 1, label: "禁止展示" },
       ],
       // 遮罩层
       loading: true,
@@ -480,10 +480,21 @@ export default {
       // this.reset();
       getDept(row.deptId).then((response) => {
         const data = response.data;
-        if (data.subsystem) {
+        if (
+          data.subsystem !== undefined &&
+          data.subsystem !== null &&
+          data.subsystem > 0
+        ) {
+          // 将数值转换为对应的选项数组
           data.subsystem = this.xtoptions
-            .filter((opt) => (data.subsystem & opt.value) !== 0)
+            .filter((opt) => {
+              // 检查该选项的值是否包含在总值中
+              return (data.subsystem & opt.value) === opt.value;
+            })
             .map((opt) => opt.value);
+        } else {
+          // 如果没有值，设置为空数组
+          data.subsystem = [];
         }
         this.form = data;
         this.open = true;
@@ -508,13 +519,13 @@ export default {
         ? this.form.subsystem
         : [];
       const subsystemTotalValue = subsystemValues.reduce(
-        (sum, v) => sum | v,
+        (sum, v) => sum + v,
         0
       );
       this.$refs["form"].validate((valid) => {
         if (valid) {
           const formData = {
-            ...this.form, 
+            ...this.form,
             subsystem: subsystemTotalValue,
           };
           if (this.form.deptId != undefined) {
